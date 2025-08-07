@@ -1,4 +1,4 @@
-import db from "#db/client.js";
+import db from "#db/client";
 
 // fetchs all Finds from the db, sorted by most recent found_date
 //  result returns as an array of Finds
