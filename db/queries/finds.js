@@ -1,4 +1,4 @@
-import db from "#db/client"; // pg client
+import db from "#db/client";
 
 //inserts a new mushroom find in the db
 export async function createFind({
