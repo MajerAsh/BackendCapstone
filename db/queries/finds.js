@@ -1,30 +1,44 @@
 import db from "#db/client";
 
-// fetchs all Finds from the db, sorted by most recent found_date
-//  result returns as an array of Finds
+// all finds + username for map/popups
 export async function getAllFinds() {
-  const sql = `SELECT * FROM finds ORDER BY found_date DESC`;
+  const sql = `
+    SELECT f.*, u.username
+    FROM finds f
+    JOIN users u ON u.id = f.user_id
+    ORDER BY f.date_found DESC
+  `;
   const { rows } = await db.query(sql);
   return rows;
 }
 
-//fetches all Finds created by single user, sorted by found_date
 export async function getFindsByUserId(user_id) {
-  const sql = `SELECT * FROM finds WHERE user_id = $1 ORDER BY found_date DESC`;
+  const sql = `
+    SELECT f.*, u.username
+    FROM finds f
+    JOIN users u ON u.id = f.user_id
+    WHERE f.user_id = $1
+    ORDER BY f.date_found DESC
+  `;
   const { rows } = await db.query(sql, [user_id]);
   return rows;
 }
 
+//8/8/25:current user's finds
+export async function getMyFinds(user_id) {
+  return getFindsByUserId(user_id);
+}
+
 //Cr8s a new Find in the db and return the newly cr8ed record
 export async function createFind({
-  userId,
+  user_id,
   species,
   description,
-  imageUrl,
+  image_url,
   latitude,
   longitude,
   location,
-  dateFound,
+  date_found,
 }) {
   const sql = `
     INSERT INTO finds
@@ -34,33 +48,38 @@ export async function createFind({
     RETURNING *
   `;
   const values = [
-    userId,
+    user_id,
     species,
     description,
-    imageUrl,
+    image_url,
     latitude,
     longitude,
     location,
-    dateFound,
+    date_found,
   ];
   const {
     rows: [find],
   } = await db.query(sql, values); //run query + destructure a find
   return find; //sends back a inserted find
 }
-//updates a find entry with given fields (ie species, description) by its id and user_id
+//updates a find entry with given fields (ie species, description) by its id and user_id.
+//Updated 8/8/25
 export async function updateFind(id, user_id, fields) {
-  const keys = Object.keys(fields); // Get field names to update
-  const updates = keys.map((key, idx) => `${key} = $${idx + 1}`).join(", "); //builds the dynamic SQL update string like, "species = $1, description = $2"
+  const keys = Object.keys(fields);
+  if (keys.length === 0) return null;
+
+  const setSql = keys.map((key, i) => `${key} = $${i + 1}`).join(", ");
   const values = [...Object.values(fields), id, user_id];
 
-  const sql = `UPDATE finds SET ${updates} WHERE id = $${
-    // SQL to update a specific find only if user_id matches
-    values.length - 1
-  } AND user_id = $${values.length} RETURNING *`;
+  const sql = `
+    UPDATE finds
+    SET ${setSql}
+    WHERE id = $${values.length - 1} AND user_id = $${values.length}
+    RETURNING *
+  `;
   const {
     rows: [updated],
-  } = await db.query(sql, values); // Execute and get the updated row
+  } = await db.query(sql, values);
   return updated;
 }
 
