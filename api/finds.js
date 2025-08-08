@@ -7,7 +7,7 @@ import {
   createFind,
   updateFind,
   deleteFind,
-} from "#models/finds";
+} from "#db/queries/finds";
 
 const router = express.Router();
 
