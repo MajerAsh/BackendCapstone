@@ -88,3 +88,16 @@ export async function deleteFind(id, user_id) {
   const sql = `DELETE FROM finds WHERE id = $1 AND user_id = $2`; //only the owner can delete their find
   await db.query(sql, [id, user_id]);
 }
+
+//for find foragers:
+export async function getFindsByUsername(username) {
+  const sql = `
+    SELECT f.*, u.username
+    FROM finds f
+    JOIN users u ON u.id = f.user_id
+    WHERE u.username = $1
+    ORDER BY f.date_found DESC
+  `;
+  const { rows } = await db.query(sql, [username]);
+  return rows;
+}
