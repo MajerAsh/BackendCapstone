@@ -4,6 +4,7 @@ import requireBody from "#middleware/requireBody";
 import {
   getAllFinds,
   getFindsByUserId,
+  getMyFinds,
   createFind,
   updateFind,
   deleteFind,
@@ -24,11 +25,21 @@ router.get("/", async (req, res, next) => {
   }
 });
 
+// GET /finds/me (auth)
+router.get("/me", requireUser, async (req, res, next) => {
+  try {
+    const finds = await getMyFinds(req.user.id);
+    res.send(finds);
+  } catch (err) {
+    next(err);
+  }
+});
+
 // POST /finds (auth required/protected)
 router.post(
   "/",
   requireUser,
-  requireBody(["species", "found_date"]),
+  requireBody(["species", "date_found"]),
   async (req, res, next) => {
     try {
       const newFind = await createFind({ ...req.body, user_id: req.user.id });
