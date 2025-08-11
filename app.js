@@ -20,8 +20,10 @@ app.use(getUserFromToken);
 
 //Serve uploaded files at /uploads/*
 app.use("/uploads", express.static(path.resolve("uploads")));
+
 //root route: — quick test endpoint
-app.get("/", (req, res) => res.send("Hello, World!"));
+app.get("/", (req, res) => res.send("Test endpoint!"));
+
 //resource routes:
 app.use("/users", usersRouter);
 app.use("/finds", findsRouter);
