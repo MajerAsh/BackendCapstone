@@ -10,6 +10,7 @@ import getUserFromToken from "#middleware/getUserFromToken"; //attach user info 
 import handlePostgresErrors from "#middleware/handlePostgresErrors";
 import cors from "cors";
 import morgan from "morgan"; //logs incoming requests in readable format
+import path from "node:path"; //Node module for paths
 
 app.use(cors({ origin: process.env.CORS_ORIGIN ?? /localhost/ })); //CORS setup:allow requests from configured origin or any localhost
 app.use(morgan("dev"));
@@ -17,6 +18,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true })); //parse URL-encoded stuff (form submissions)
 app.use(getUserFromToken);
 
+//Serve uploaded files at /uploads/*
+app.use("/uploads", express.static(path.resolve("uploads")));
 //root route: — quick test endpoint
 app.get("/", (req, res) => res.send("Hello, World!"));
 //resource routes:

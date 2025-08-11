@@ -70,8 +70,7 @@ export async function createFind({
   } = await db.query(sql, values); //run query + destructure a find
   return find; //sends back a inserted find
 }
-//updates a find entry with given fields (ie species, description) by its id and user_id.
-//Updated 8/8/25
+//updates a find entry with given fields by id and user_id.
 export async function updateFind(id, user_id, fields) {
   const keys = Object.keys(fields);
   if (keys.length === 0) return null;
