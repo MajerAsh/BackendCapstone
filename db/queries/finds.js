@@ -3,7 +3,11 @@ import db from "#db/client";
 // all finds + username for map/popups
 export async function getAllFinds() {
   const sql = `
-    SELECT f.*, u.username
+    SELECT
+      f.id, f.user_id, f.species, f.description, f.image_url,
+      f.latitude, f.longitude, f.location,
+      to_char(f.date_found, 'YYYY-MM-DD') AS date_found,
+      u.username
     FROM finds f
     JOIN users u ON u.id = f.user_id
     ORDER BY f.date_found DESC
@@ -14,7 +18,11 @@ export async function getAllFinds() {
 
 export async function getFindsByUserId(user_id) {
   const sql = `
-    SELECT f.*, u.username
+  SELECT
+      f.id, f.user_id, f.species, f.description, f.image_url,
+      f.latitude, f.longitude, f.location,
+      to_char(f.date_found, 'YYYY-MM-DD') AS date_found,
+      u.username
     FROM finds f
     JOIN users u ON u.id = f.user_id
     WHERE f.user_id = $1
@@ -92,7 +100,11 @@ export async function deleteFind(id, user_id) {
 //for find foragers:
 export async function getFindsByUsername(username) {
   const sql = `
-    SELECT f.*, u.username
+    SELECT
+      f.id, f.user_id, f.species, f.description, f.image_url,
+      f.latitude, f.longitude, f.location,
+      to_char(f.date_found, 'YYYY-MM-DD') AS date_found,
+      u.username
     FROM finds f
     JOIN users u ON u.id = f.user_id
     WHERE u.username = $1
