@@ -12,6 +12,7 @@ import cors from "cors";
 import morgan from "morgan"; //logs incoming requests in readable format
 import path from "node:path"; //Node module for paths
 
+app.use("/images", express.static(path.resolve("public_images"))); // dummy data mushies
 app.use(cors({ origin: process.env.CORS_ORIGIN ?? /localhost/ })); //CORS setup:allow requests from configured origin or any localhost
 app.use(morgan("dev"));
 app.use(express.json());

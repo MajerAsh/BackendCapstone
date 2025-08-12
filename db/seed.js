@@ -30,66 +30,47 @@ const speciesList = [
   "Black Trumpet",
 ];
 
-const imagePool = [
-  "https://commons.wikimedia.org/wiki/Special:FilePath/Morchella%20esculenta%203.jpg",
-  "https://commons.wikimedia.org/wiki/Special:FilePath/Chanterelle%20Cantharellus%20cibarius.jpg",
-  "https://commons.wikimedia.org/wiki/Special:FilePath/Pleurotus%20ostreatus%20JPG6.jpg",
-  "https://commons.wikimedia.org/wiki/Special:FilePath/Lentinula%20edodes%2020100918.jpg",
-  "https://commons.wikimedia.org/wiki/Special:FilePath/Boletus%20edulis%20EtgHoll.jpg",
-  "https://commons.wikimedia.org/wiki/Special:FilePath/Enokitake.jpg",
-  "https://commons.wikimedia.org/wiki/Special:FilePath/Hericium%20erinaceus%20IW.jpg",
-  "https://commons.wikimedia.org/wiki/Special:FilePath/Trametes%20versicolor%20JPG1.jpg",
-  "https://commons.wikimedia.org/wiki/Special:FilePath/Grifola%20frondosa%202010%20G1.jpg",
-  "https://commons.wikimedia.org/wiki/Special:FilePath/Craterellus%20cornucopioides%202.jpg",
-];
+// app.js has import app.use("/images", express.static(path.resolve("public_images")));
+
+const imageBySpecies = {
+  Morel: "/images/morel.webp",
+  Chanterelle: "/images/chanterelle.webp",
+  Oyster: "/images/oyster.jpg",
+  Shiitake: "/images/shiitake.jpg",
+  Porcini: "/images/porcini.jpg",
+  Enoki: "/images/enoki.jpg",
+  "Lion's Mane": "/images/lions-mane.png",
+  "Turkey Tail": "/images/turkey-tail.webp",
+  Maitake: "/images/maitake.webp",
+  "Black Trumpet": "/images/black-trumpet.webp",
+};
 
 const worldSpots = [
-  { location: "New York, USA", latitude: 40.7128, longitude: -74.006 },
+  // North America (temperate, forested)
   { location: "Eugene, USA", latitude: 44.0521, longitude: -123.0868 },
-  { location: "Vancouver, Canada", latitude: 49.2827, longitude: -123.1207 },
-  { location: "Mexico City, Mexico", latitude: 19.4326, longitude: -99.1332 },
-  {
-    location: "Rio de Janeiro, Brazil",
-    latitude: -22.9068,
-    longitude: -43.1729,
-  },
-  {
-    location: "Buenos Aires, Argentina",
-    latitude: -34.6037,
-    longitude: -58.3816,
-  },
-  { location: "Reykjavík, Iceland", latitude: 64.1466, longitude: -21.9426 },
-  { location: "London, UK", latitude: 51.5072, longitude: -0.1276 },
-  { location: "Paris, France", latitude: 48.8566, longitude: 2.3522 },
-  { location: "Berlin, Germany", latitude: 52.52, longitude: 13.405 },
-  { location: "Rome, Italy", latitude: 41.9028, longitude: 12.4964 },
-  { location: "Madrid, Spain", latitude: 40.4168, longitude: -3.7038 },
-  { location: "Lisbon, Portugal", latitude: 38.7223, longitude: -9.1393 },
-  { location: "Stockholm, Sweden", latitude: 59.3293, longitude: 18.0686 },
-  { location: "Athens, Greece", latitude: 37.9838, longitude: 23.7275 },
-  { location: "Cairo, Egypt", latitude: 30.0444, longitude: 31.2357 },
-  { location: "Nairobi, Kenya", latitude: -1.2921, longitude: 36.8219 },
-  {
-    location: "Cape Town, South Africa",
-    latitude: -33.9249,
-    longitude: 18.4241,
-  },
-  { location: "Dubai, UAE", latitude: 25.2048, longitude: 55.2708 },
-  { location: "Mumbai, India", latitude: 19.076, longitude: 72.8777 },
-  { location: "Bangkok, Thailand", latitude: 13.7563, longitude: 100.5018 },
-  { location: "Singapore, Singapore", latitude: 1.3521, longitude: 103.8198 },
-  { location: "Hong Kong, China", latitude: 22.3193, longitude: 114.1694 },
-  { location: "Seoul, South Korea", latitude: 37.5665, longitude: 126.978 },
-  { location: "Tokyo, Japan", latitude: 35.6762, longitude: 139.6503 },
-  { location: "Sydney, Australia", latitude: -33.8688, longitude: 151.2093 },
-  {
-    location: "Auckland, New Zealand",
-    latitude: -36.8509,
-    longitude: 174.7645,
-  },
-  { location: "Honolulu, USA", latitude: 21.3069, longitude: -157.8583 },
+  { location: "Seattle, USA", latitude: 47.6062, longitude: -122.3321 },
+  { location: "Portland, USA", latitude: 45.5152, longitude: -122.6784 },
+  { location: "Burlington, USA", latitude: 44.4759, longitude: -73.2121 },
   { location: "Anchorage, USA", latitude: 61.2181, longitude: -149.9003 },
+  { location: "Vancouver, Canada", latitude: 49.2827, longitude: -123.1207 },
+  { location: "Quebec City, Canada", latitude: 46.8139, longitude: -71.208 },
+
+  // Europe (temperate, forested)
+  { location: "Stockholm, Sweden", latitude: 59.3293, longitude: 18.0686 },
   { location: "Helsinki, Finland", latitude: 60.1699, longitude: 24.9384 },
+  { location: "Oslo, Norway", latitude: 59.9139, longitude: 10.7522 },
+  { location: "Berlin, Germany", latitude: 52.52, longitude: 13.405 },
+  { location: "Munich, Germany", latitude: 48.1351, longitude: 11.582 },
+  { location: "Prague, Czechia", latitude: 50.0755, longitude: 14.4378 },
+  { location: "Vienna, Austria", latitude: 48.2082, longitude: 16.3738 },
+  { location: "Zurich, Switzerland", latitude: 47.3769, longitude: 8.5417 },
+  { location: "Warsaw, Poland", latitude: 52.2297, longitude: 21.0122 },
+
+  // East Asia (all 10 wild; helps cover shiitake)
+  { location: "Sapporo, Japan", latitude: 43.0621, longitude: 141.3544 },
+  { location: "Sendai, Japan", latitude: 38.2682, longitude: 140.8694 },
+  { location: "Seoul, South Korea", latitude: 37.5665, longitude: 126.978 },
+  { location: "Harbin, China", latitude: 45.8038, longitude: 126.5349 },
 ];
 
 // base names then add random suffix so re-seeding never collides
@@ -128,7 +109,7 @@ async function seed() {
     user_id: foo.id,
     species: "Morel",
     description: "Found in the forest near a stream.",
-    image_url: choice(imagePool),
+    image_url: imageBySpecies["Morel"],
     latitude: 40.7128,
     longitude: -74.006,
     location: "New York, NY",
@@ -139,7 +120,7 @@ async function seed() {
     user_id: foo.id,
     species: "Chanterelle",
     description: "Mossy hillside. Sunny after rain.",
-    image_url: choice(imagePool),
+    image_url: imageBySpecies["Chanterelle"],
     latitude: 44.0521,
     longitude: -123.0868,
     location: "Eugene, OR",
@@ -159,7 +140,7 @@ async function seed() {
       user_id: u.id,
       species: s1,
       description: `${s1} spotted near trail. Fresh cap, good condition.`,
-      image_url: choice(imagePool),
+      image_url: imageBySpecies[s1],
       latitude: spot1.latitude,
       longitude: spot1.longitude,
       location: spot1.location,
@@ -170,7 +151,7 @@ async function seed() {
       user_id: u.id,
       species: s2,
       description: `${s2} cluster by fallen log. Moist substrate.`,
-      image_url: choice(imagePool),
+      image_url: imageBySpecies[s2],
       latitude: spot2.latitude,
       longitude: spot2.longitude,
       location: spot2.location,
@@ -179,7 +160,7 @@ async function seed() {
   }
 }
 
-/* -----------------run ----------------- */
+/* ----------------- run ----------------- */
 await db.connect();
 try {
   await seed();
