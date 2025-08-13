@@ -1,6 +1,6 @@
 import db from "#db/client";
 
-// all finds + username for map/popups
+// all finds + username for map/popups (logged in)
 export async function getAllFinds() {
   const sql = `
     SELECT
@@ -16,6 +16,7 @@ export async function getAllFinds() {
   return rows;
 }
 
+// to see all the find/ myfinds
 export async function getFindsByUserId(user_id) {
   const sql = `
   SELECT
@@ -32,12 +33,30 @@ export async function getFindsByUserId(user_id) {
   return rows;
 }
 
-//8/8/25:current user's finds
+//current user's finds
 export async function getMyFinds(user_id) {
   return getFindsByUserId(user_id);
 }
 
-//Cr8s a new Find in the db and return the newly cr8ed record
+// get one find for a given user (for edit/view)
+export async function getFindByIdForUser(id, user_id) {
+  const sql = `
+    SELECT
+      f.id, f.user_id, f.species, f.description, f.image_url,
+      f.latitude, f.longitude, f.location,
+      to_char(f.date_found, 'YYYY-MM-DD') AS date_found,
+      u.username
+    FROM finds f
+    JOIN users u ON u.id = f.user_id
+    WHERE f.id = $1 AND f.user_id = $2
+  `;
+  const {
+    rows: [row],
+  } = await db.query(sql, [id, user_id]);
+  return row || null;
+}
+
+//makes a new Find in the db and return the newly created record
 export async function createFind({
   user_id,
   species,
@@ -70,7 +89,7 @@ export async function createFind({
   } = await db.query(sql, values); //run query + destructure a find
   return find; //sends back a inserted find
 }
-//updates a find entry with given fields by id and user_id.
+//update a find entry (owner/id only)
 export async function updateFind(id, user_id, fields) {
   const keys = Object.keys(fields);
   if (keys.length === 0) return null;
@@ -90,7 +109,7 @@ export async function updateFind(id, user_id, fields) {
   return updated;
 }
 
-//deletes a specific find by id and user_id (auth check)
+//delete a specific find (owner only)
 export async function deleteFind(id, user_id) {
   const sql = `DELETE FROM finds WHERE id = $1 AND user_id = $2`; //only the owner can delete their find
   await db.query(sql, [id, user_id]);
