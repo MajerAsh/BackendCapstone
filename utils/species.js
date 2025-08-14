@@ -7,7 +7,7 @@ export function normalizeName(input) {
     .replace(/\s+/g, " ") //regex for spaces
     .trim();
 }
-
+/////////////////////////////////////////////////////////////////NAMES
 const SYNONYMS = new Map([
   //dummy data edibles
   // Morel (Morchella spp.)
@@ -133,7 +133,7 @@ const SYNONYMS = new Map([
   ["clitocybe rivulosa", "clitocybe rivulosa"],
   ["clitocybe dealbata", "clitocybe dealbata"],
 
-  //Deadly (or coma) look a likes for edibles
+  //Deadly (or coma) look a likes for edibles//////lookalikes
   ["false morel", "gyromitra esculenta"],
   ["gyromitra", "gyromitra esculenta"],
   ["gyromitra esculenta", "gyromitra esculenta"],
@@ -149,9 +149,9 @@ const SYNONYMS = new Map([
   ["funeral bells", "galerina marginata"],
 ]);
 
-//fact sheet
+///////////////////////////////////////////////////////FACT SHEET
 export const SPECIES_META = {
-  ////////////////////////////////////EDIBLES
+  //EDIBLES
   "morchella spp.": {
     edible: true,
     deadly: false,
@@ -312,7 +312,7 @@ export const SPECIES_META = {
     deadly_lookalikes: [],
   },
 
-  ///////////////////////////////////DEADLY / FATAL GROUP
+  ///DEADLY / FATAL GROUP
   "amanita phalloides": {
     edible: false,
     deadly: true,
@@ -417,8 +417,7 @@ export const SPECIES_META = {
     notes: "Often confused with harmless lawn mushrooms.",
     deadly_lookalikes: [],
   },
-
-  /////////////////////////////////////////////////DEADLY LOOK‑ALIKES for edibles
+  ////////////////////////DEADLY LOOK‑ALIKES for edibles
   "gyromitra esculenta": {
     edible: false,
     deadly: true,
@@ -453,13 +452,13 @@ export const SPECIES_META = {
   },
 };
 
-/*  look up name, if found, return the standard/resolve name stored in map.
+/*look up name, if found, return the standard/resolve name stored in map.
    If not found, just return the normalized name itself*/
 export function resolveName(input) {
   const key = normalizeName(input);
   return SYNONYMS.get(key) || key;
 }
-// Get localSafety info for a resolve species name
+//get the localSafety info (fact sheet) for a resolve species name
 export function localSafety(input) {
   const resolved = resolveName(input);
   return SPECIES_META[resolved] || null;

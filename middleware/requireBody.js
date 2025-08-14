@@ -1,4 +1,4 @@
-/** Checks if the request body contains the required fields */
+//checks if the request body contains the required fields:
 export default function requireBody(fields) {
   return (req, res, next) => {
     if (!req.body) return res.status(400).send("Request body is required.");

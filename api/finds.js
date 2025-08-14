@@ -3,7 +3,7 @@ import multer from "multer";
 import path from "node:path";
 import fs from "node:fs";
 
-import requireUser from "#middleware/requireUser";
+import requireUser from "#middleware/requireUser"; //makes sure req.user exists (auth)
 import requireBody from "#middleware/requireBody";
 import {
   getAllFinds,
@@ -17,11 +17,40 @@ import {
 
 const router = express.Router();
 
-//Configure Multer storage, limits, and filtering
+////Helpers for validation/ error handling:
+
+function isValidISODateYYYYMMDD(s) {
+  if (typeof s !== "string") return false;
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(s)) return false;
+  const d = new Date(s + "T00:00:00Z");
+  return !Number.isNaN(d.getTime()) && s === d.toISOString().slice(0, 10);
+}
+
+function validateFindFields(fields) {
+  // date_found (required on POST, optional on PUT)
+  if (
+    fields.date_found !== undefined &&
+    !isValidISODateYYYYMMDD(fields.date_found)
+  ) {
+    return "date_found must be YYYY-MM-DD";
+  }
+  // latitude/longitude if present must be finite numbers
+  for (const key of ["latitude", "longitude"]) {
+    if (fields[key] !== undefined && fields[key] !== "") {
+      const n = Number(fields[key]);
+      if (!Number.isFinite(n)) return `${key} must be a number`;
+    }
+  }
+  return null;
+}
+
+////////////////////////////////////////MULTER set up:
+
+// uploads exist
 const uploadsDir = path.resolve("uploads");
 if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir, { recursive: true });
 
-//multer setup
+//Multer storage/ limits
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, uploadsDir),
   filename: (req, file, cb) => {
@@ -32,17 +61,22 @@ const storage = multer.diskStorage({
     cb(null, `${Date.now()}-${base}${ext}`);
   },
 });
+//filename/ time stamp
 const fileFilter = (req, file, cb) => {
+  //regex! to cut white space and shorten excessive text
   if (/^image\//.test(file.mimetype)) cb(null, true);
   else cb(new Error("Only image uploads are allowed"));
 };
+// 5MB max file size; use the disk storage + filter the above stuff
 const upload = multer({
   storage,
   fileFilter,
-  limits: { fileSize: 5 * 1024 * 1024 }, //5MB
+  limits: { fileSize: 5 * 1024 * 1024 },
 });
 
-// GET /finds?user_id=optional (public)
+/////////////////////////////////////////////ROUTES
+
+// GET /finds (public = userid optional): user_id exists = show that user's finds, otherwise, = public finds
 router.get("/", async (req, res, next) => {
   try {
     const { user_id } = req.query;
@@ -51,11 +85,11 @@ router.get("/", async (req, res, next) => {
       : await getAllFinds();
     res.send(finds);
   } catch (err) {
-    next(err);
+    next(err); // pass error to mw
   }
 });
 
-// GET /finds/me (auth)
+// GET /finds/me (auth): return myfinds/ the auth. user's finds
 router.get("/me", requireUser, async (req, res, next) => {
   try {
     const finds = await getMyFinds(req.user.id);
@@ -65,7 +99,7 @@ router.get("/me", requireUser, async (req, res, next) => {
   }
 });
 
-//GET /finds/:id (auth, owner-only) – used to prefill the edit form
+//GET /finds/:id (auth, owner-only) – prefill the edit form
 router.get("/:id", requireUser, async (req, res, next) => {
   try {
     const find = await getFindByIdForUser(req.params.id, req.user.id);
@@ -76,17 +110,17 @@ router.get("/:id", requireUser, async (req, res, next) => {
   }
 });
 
-// POST /finds (auth required/protected)
+// POST /finds (auth required/protected) New find created!
 router.post(
   "/",
   requireUser,
-  upload.single("photo"),
+  upload.single("photo"), // single photo upload option
   requireBody(["species", "date_found"]),
   async (req, res, next) => {
     try {
-      const image_url = req.file ? `/uploads/${req.file.filename}` : null;
+      const image_url = req.file ? `/uploads/${req.file.filename}` : null; // if theres a img upload
       const newFind = await createFind({
-        ...req.body,
+        ...req.body, // species, date_found...
         user_id: req.user.id,
         image_url,
       });
@@ -97,7 +131,7 @@ router.post(
   }
 );
 
-// PUT /finds/:id (owner only) replace data with other data: photo and #s
+// PUT /finds/:id (owner only) Edit page: replace data with other data: photo and #s
 router.put(
   "/:id",
   requireUser,
@@ -106,7 +140,7 @@ router.put(
     try {
       const fields = { ...req.body };
 
-      //string to number conversion unless empty
+      //string to number conversion unless empty - 1st block = lat., 2nd = long. obviously
       if (fields.latitude !== undefined) {
         if (fields.latitude === "") delete fields.latitude;
         else fields.latitude = Number(fields.latitude);
@@ -117,14 +151,14 @@ router.put(
         else fields.longitude = Number(fields.longitude);
       }
 
-      //replaces image_url for a optional photo update
+      //replaces image_url for edit/ changing photo
       if (req.file) fields.image_url = `/uploads/${req.file.filename}`;
 
       // remove keys that are undefined/empty to avoid pointless updates " prune undefined keys"
       Object.keys(fields).forEach((k) => {
         if (fields[k] === undefined) delete fields[k];
       });
-
+      //if updated, returned falsy, either not found or nothing changed
       const updated = await updateFind(req.params.id, req.user.id, fields);
       if (!updated) return res.status(404).send("Updated with no changes");
       res.send(updated);
@@ -138,7 +172,7 @@ router.put(
 router.delete("/:id", requireUser, async (req, res, next) => {
   try {
     await deleteFind(req.params.id, req.user.id);
-    res.send({ message: "Find deleted" }); // res.status(204).end();  ?
+    res.send({ message: "Find deleted" }); // orrrr: res.status(204).end();  ??
   } catch (err) {
     next(err);
   }
