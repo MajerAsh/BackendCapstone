@@ -148,6 +148,8 @@ const SYNONYMS = new Map([
   ["galerina", "galerina marginata"],
   ["funeral bells", "galerina marginata"],
 ]);
+
+//fact sheet
 export const SPECIES_META = {
   ////////////////////////////////////EDIBLES
   "morchella spp.": {
@@ -190,7 +192,7 @@ export const SPECIES_META = {
     syndrome: null,
     notes:
       "Porcini/cep; avoid boletes with red pores or blue bruising if unsure.",
-    deadly_lookalikes: [], // devil's bolete considered deadly but causes GI, not in deadly list 🧙‍♂️
+    deadly_lookalikes: [],
   },
   "flammulina filiformis": {
     edible: true,
