@@ -1,5 +1,5 @@
 {
-  "name": "foobar",
+  "name": "backendcapstonemyco",
   "type": "module",
   "imports": {
     "#*": "./*.js"
@@ -8,7 +8,7 @@
     "start": "node --env-file=.env server.js",
     "dev": "node --watch --env-file=.env server.js",
     "test": "vitest",
-    "db:schema": "psql -d foobar -f db/schema.sql",
+    "db:schema": "psql -d mycomapdb -f db/schema.sql",
     "db:seed": "node --env-file=.env db/seed.js",
     "db:reset": "npm run db:schema && npm run db:seed"
   },
@@ -18,7 +18,9 @@
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.0",
-    "pg": "^8.14.1"
+    "multer": "^2.0.2",
+    "pg": "^8.14.1",
+    "react-router": "^7.7.1"
   },
   "engines": {
     "node": ">=22.0.0"

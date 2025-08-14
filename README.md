@@ -1,10 +1,37 @@
-# Backend Template
+**[Backend Repository](https://github.com/MajerAsh/BackendCapstone)**
+MycoMap BackendCapstone
 
-You can use this repository as a template for your backend. It comes with a `users` table
-as well as routes to register and login.
+This is the backend repository for MycoMap, a mushroom foraging platform. It provides a RESTful API using Express and PostgreSQL database schema for authentication and mushroom find logging.
+The frontend lives in the FrontendCapstone repository.
 
-## Usage
+--------- Features:
 
-1. Change the name of the package in `package.json`.
-2. Change the database name from `foobar` in the `db:schema` script.
-3. Update the environment variables in `example.env` and rename the file to `.env`.
+-RESTful API with:
+User registration and login
+JWT-based authentication
+CRUD routes for mushroom finds
+
+-PostgreSQL database with users and finds tables
+
+-Middleware for:
+Request body validation
+Auth token verification
+Postgres error handling
+
+-Image upload with Multer (local storage)
+
+--------- Technologies:
+
+-Express.js (v5)
+
+-PostgreSQL
+
+-pg (node-postgres)
+
+-bcrypt (hashing passwords)
+
+-jsonwebtoken (JWT auth)
+
+-Multer (image upload)
+
+-CORS & Morgan

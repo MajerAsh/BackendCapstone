@@ -44,3 +44,15 @@ export async function getUserById(id) {
   } = await db.query(sql, [id]);
   return user;
 }
+
+//query for find foragers cmponent:
+export async function searchUsersByUsername(term) {
+  const sql = `
+    SELECT id, username, city, state
+    FROM users
+    WHERE username ILIKE '%' || $1 || '%'
+    ORDER BY username ASC
+  `;
+  const { rows } = await db.query(sql, [term]);
+  return rows;
+}
