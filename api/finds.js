@@ -17,10 +17,9 @@ import {
 
 const router = express.Router();
 
-////Helpers- error handling:
+////Helpers for validation/ error handling:
 
 function isValidISODateYYYYMMDD(s) {
-  //NEVER CALLED
   if (typeof s !== "string") return false;
   if (!/^\d{4}-\d{2}-\d{2}$/.test(s)) return false;
   const d = new Date(s + "T00:00:00Z");
@@ -28,7 +27,6 @@ function isValidISODateYYYYMMDD(s) {
 }
 
 function validateFindFields(fields) {
-  //""
   // date_found (required on POST, optional on PUT)
   if (
     fields.date_found !== undefined &&
@@ -78,7 +76,7 @@ const upload = multer({
 
 /////////////////////////////////////////////ROUTES
 
-// GET /finds (public = userid optional): user_id exists = show that user's finds, otherwise, = public finds
+// GET /finds (public = userid): user_id exists = show that user's finds, otherwise, = public finds
 router.get("/", async (req, res, next) => {
   try {
     const { user_id } = req.query;
@@ -112,7 +110,7 @@ router.get("/:id", requireUser, async (req, res, next) => {
   }
 });
 
-// POST /finds (auth required/protected) new find
+// POST /finds (auth required/protected) New find
 router.post(
   "/",
   requireUser,
@@ -120,9 +118,6 @@ router.post(
   requireBody(["species", "date_found"]),
   async (req, res, next) => {
     try {
-      const invalid = validateFindFields(req.body);
-      if (invalid) return res.status(400).send(invalid);
-
       const image_url = req.file ? `/uploads/${req.file.filename}` : null; // if theres a img upload
       const newFind = await createFind({
         ...req.body, // species, date_found...
@@ -144,9 +139,6 @@ router.put(
   async (req, res, next) => {
     try {
       const fields = { ...req.body };
-
-      const invalid = validateFindFields(fields);
-      if (invalid) return res.status(400).send(invalid);
 
       //string to number conversion unless empty - 1st block = lat., 2nd = long. obviously
       if (fields.latitude !== undefined) {
