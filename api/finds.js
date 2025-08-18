@@ -19,14 +19,14 @@ const router = express.Router();
 
 ////Helpers for validation/ error handling:
 
-function isValidISODateYYYYMMDD(s) {
+/*function isValidISODateYYYYMMDD(s) {
   if (typeof s !== "string") return false;
   if (!/^\d{4}-\d{2}-\d{2}$/.test(s)) return false;
   const d = new Date(s + "T00:00:00Z");
   return !Number.isNaN(d.getTime()) && s === d.toISOString().slice(0, 10);
-}
+}*/
 
-function validateFindFields(fields) {
+/*function validateFindFields(fields) {
   // date_found (required on POST, optional on PUT)
   if (
     fields.date_found !== undefined &&
@@ -42,15 +42,15 @@ function validateFindFields(fields) {
     }
   }
   return null;
-}
+}*/
 
 ////////////////////////////////////////MULTER set up:
 
-// uploads exist
+// uploads exists
 const uploadsDir = path.resolve("uploads");
 if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir, { recursive: true });
 
-//Multer storage/ limits
+//Multer storage
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, uploadsDir),
   filename: (req, file, cb) => {
@@ -74,9 +74,9 @@ const upload = multer({
   limits: { fileSize: 5 * 1024 * 1024 },
 });
 
-/////////////////////////////////////////////ROUTES
+/////////////////////////////////////////////ROUTES:
 
-// GET /finds (public = userid): user_id exists = show that user's finds, otherwise, = public finds
+// GET /finds (public)
 router.get("/", async (req, res, next) => {
   try {
     const { user_id } = req.query;
@@ -89,7 +89,7 @@ router.get("/", async (req, res, next) => {
   }
 });
 
-// GET /finds/me (auth): return myfinds/ the auth. user's finds
+// GET /finds/me (auth)
 router.get("/me", requireUser, async (req, res, next) => {
   try {
     const finds = await getMyFinds(req.user.id);
@@ -110,7 +110,7 @@ router.get("/:id", requireUser, async (req, res, next) => {
   }
 });
 
-// POST /finds (auth required/protected) New find
+// POST /finds (auth) - create a new find
 router.post(
   "/",
   requireUser,
@@ -120,7 +120,7 @@ router.post(
     try {
       const image_url = req.file ? `/uploads/${req.file.filename}` : null; // if theres a img upload
       const newFind = await createFind({
-        ...req.body, // species, date_found...
+        ...req.body, // species, date_found, description, latitude, longitude, location
         user_id: req.user.id,
         image_url,
       });
@@ -131,7 +131,7 @@ router.post(
   }
 );
 
-// PUT /finds/:id (owner only) Edit page: replace data with other data: photo and #s
+// PUT /finds/:id (owner only) Edit page: replace data with other data: photo and #s:
 router.put(
   "/:id",
   requireUser,
@@ -140,7 +140,7 @@ router.put(
     try {
       const fields = { ...req.body };
 
-      //string to number conversion unless empty - 1st block = lat., 2nd = long. obviously
+      // Convert lat/long strings to numbers if provided; drop empty strings:
       if (fields.latitude !== undefined) {
         if (fields.latitude === "") delete fields.latitude;
         else fields.latitude = Number(fields.latitude);
@@ -151,10 +151,10 @@ router.put(
         else fields.longitude = Number(fields.longitude);
       }
 
-      //replaces image_url for edit/ changing photo
+      //replaces image_url for edit/ changing photo:
       if (req.file) fields.image_url = `/uploads/${req.file.filename}`;
 
-      // remove keys that are undefined/empty to avoid pointless updates " prune undefined keys"
+      //Prunes undefined values to avoid no-op updates:
       Object.keys(fields).forEach((k) => {
         if (fields[k] === undefined) delete fields[k];
       });
@@ -168,11 +168,11 @@ router.put(
   }
 );
 
-// DELETE /finds/:id (protected)
+// DELETE /finds/:id (auth, owner only)
 router.delete("/:id", requireUser, async (req, res, next) => {
   try {
     await deleteFind(req.params.id, req.user.id);
-    res.send({ message: "Find deleted" }); // orrrr: res.status(204).end();  ??
+    res.send({ message: "Find deleted" });
   } catch (err) {
     next(err);
   }
