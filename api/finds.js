@@ -17,9 +17,10 @@ import {
 
 const router = express.Router();
 
-////Helpers for validation/ error handling:
+////Helpers- error handling:
 
 function isValidISODateYYYYMMDD(s) {
+  //NEVER CALLED
   if (typeof s !== "string") return false;
   if (!/^\d{4}-\d{2}-\d{2}$/.test(s)) return false;
   const d = new Date(s + "T00:00:00Z");
@@ -27,6 +28,7 @@ function isValidISODateYYYYMMDD(s) {
 }
 
 function validateFindFields(fields) {
+  //""
   // date_found (required on POST, optional on PUT)
   if (
     fields.date_found !== undefined &&
@@ -110,14 +112,17 @@ router.get("/:id", requireUser, async (req, res, next) => {
   }
 });
 
-// POST /finds (auth required/protected) New find created!
+// POST /finds (auth required/protected) new find
 router.post(
   "/",
   requireUser,
-  upload.single("photo"), // single photo upload option
+  upload.single("photo"),
   requireBody(["species", "date_found"]),
   async (req, res, next) => {
     try {
+      const invalid = validateFindFields(req.body);
+      if (invalid) return res.status(400).send(invalid);
+
       const image_url = req.file ? `/uploads/${req.file.filename}` : null; // if theres a img upload
       const newFind = await createFind({
         ...req.body, // species, date_found...
@@ -139,6 +144,9 @@ router.put(
   async (req, res, next) => {
     try {
       const fields = { ...req.body };
+
+      const invalid = validateFindFields(fields);
+      if (invalid) return res.status(400).send(invalid);
 
       //string to number conversion unless empty - 1st block = lat., 2nd = long. obviously
       if (fields.latitude !== undefined) {
