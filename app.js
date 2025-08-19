@@ -11,7 +11,7 @@ import getUserFromToken from "#middleware/getUserFromToken"; //attach user info 
 import handlePostgresErrors from "#middleware/handlePostgresErrors";
 import cors from "cors";
 import morgan from "morgan"; //logs incoming requests in readable format
-import path from "node:path"; //Node module for paths
+import path from "node:path"; //node module for paths
 
 //species helpers for facts route
 import { normalizeName, resolveName, localSafety } from "#utils/species"; //fact warning
