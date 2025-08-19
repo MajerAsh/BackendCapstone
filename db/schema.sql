@@ -19,5 +19,6 @@ CREATE TABLE finds (
   latitude float,
   longitude float,
   location text,
-  date_found date NOT NULL
+  date_found date NOT NULL,
+  hide_location boolean NOT NULL DEFAULT false
 );

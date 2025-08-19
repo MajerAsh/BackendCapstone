@@ -1,28 +1,31 @@
 import db from "#db/client";
 
-// all finds + username for map/popups (logged in)
+// Public map: exclude secret finds entirely
 export async function getAllFinds() {
   const sql = `
     SELECT
       f.id, f.user_id, f.species, f.description, f.image_url,
       f.latitude, f.longitude, f.location,
       to_char(f.date_found, 'YYYY-MM-DD') AS date_found,
+      f.hide_location,
       u.username
     FROM finds f
     JOIN users u ON u.id = f.user_id
+    WHERE f.hide_location = false
     ORDER BY f.date_found DESC
   `;
   const { rows } = await db.query(sql);
   return rows;
 }
 
-// to see all the find/ myfinds
+// Owner views (My Finds): return everything
 export async function getFindsByUserId(user_id) {
   const sql = `
-  SELECT
+    SELECT
       f.id, f.user_id, f.species, f.description, f.image_url,
       f.latitude, f.longitude, f.location,
       to_char(f.date_found, 'YYYY-MM-DD') AS date_found,
+      f.hide_location,
       u.username
     FROM finds f
     JOIN users u ON u.id = f.user_id
@@ -45,6 +48,7 @@ export async function getFindByIdForUser(id, user_id) {
       f.id, f.user_id, f.species, f.description, f.image_url,
       f.latitude, f.longitude, f.location,
       to_char(f.date_found, 'YYYY-MM-DD') AS date_found,
+      f.hide_location,
       u.username
     FROM finds f
     JOIN users u ON u.id = f.user_id
@@ -66,12 +70,14 @@ export async function createFind({
   longitude,
   location,
   date_found,
+  hide_location = false,
 }) {
   const sql = `
-    INSERT INTO finds
-      (user_id, species, description, image_url, latitude, longitude, location, date_found)
+        INSERT INTO finds
+      (user_id, species, description, image_url, latitude, longitude, location, date_found, hide_location)
     VALUES
-      ($1, $2, $3, $4, $5, $6, $7, $8)
+      ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+
     RETURNING *
   `;
   const values = [
@@ -83,6 +89,7 @@ export async function createFind({
     longitude,
     location,
     date_found,
+    hide_location,
   ];
   const {
     rows: [find],
@@ -115,13 +122,16 @@ export async function deleteFind(id, user_id) {
   await db.query(sql, [id, user_id]);
 }
 
-//for find foragers:
+// Public profile page: never leak location/coords if hidden
 export async function getFindsByUsername(username) {
   const sql = `
     SELECT
       f.id, f.user_id, f.species, f.description, f.image_url,
-      f.latitude, f.longitude, f.location,
+      CASE WHEN f.hide_location THEN NULL ELSE f.latitude  END AS latitude,
+      CASE WHEN f.hide_location THEN NULL ELSE f.longitude END AS longitude,
+      CASE WHEN f.hide_location THEN NULL ELSE f.location  END AS location,
       to_char(f.date_found, 'YYYY-MM-DD') AS date_found,
+      f.hide_location,
       u.username
     FROM finds f
     JOIN users u ON u.id = f.user_id

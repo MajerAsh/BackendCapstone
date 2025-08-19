@@ -50,11 +50,11 @@ router.route("/login").post(
 );
 
 // GET /users?search=
-//Find user (the search): WITH AUTO GUESS FEATURE 🤖
+//Find user (the search)🤖
 router.get("/", async (req, res, next) => {
   try {
     const { search } = req.query;
-    if (!search) return res.send([]); // empty until user types
+    if (!search) return res.send([]);
     // Delegate search logic to the DB layer (handles LIKE/ILIKE, limits...)
     const users = await searchUsersByUsername(search);
     res.send(users);

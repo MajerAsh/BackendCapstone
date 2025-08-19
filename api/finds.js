@@ -17,33 +17,6 @@ import {
 
 const router = express.Router();
 
-////Helpers for validation/ error handling:
-
-/*function isValidISODateYYYYMMDD(s) {
-  if (typeof s !== "string") return false;
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(s)) return false;
-  const d = new Date(s + "T00:00:00Z");
-  return !Number.isNaN(d.getTime()) && s === d.toISOString().slice(0, 10);
-}*/
-
-/*function validateFindFields(fields) {
-  // date_found (required on POST, optional on PUT)
-  if (
-    fields.date_found !== undefined &&
-    !isValidISODateYYYYMMDD(fields.date_found)
-  ) {
-    return "date_found must be YYYY-MM-DD";
-  }
-  // latitude/longitude if present must be finite numbers
-  for (const key of ["latitude", "longitude"]) {
-    if (fields[key] !== undefined && fields[key] !== "") {
-      const n = Number(fields[key]);
-      if (!Number.isFinite(n)) return `${key} must be a number`;
-    }
-  }
-  return null;
-}*/
-
 ////////////////////////////////////////MULTER set up:
 
 // uploads exists
@@ -119,10 +92,27 @@ router.post(
   async (req, res, next) => {
     try {
       const image_url = req.file ? `/uploads/${req.file.filename}` : null; // if theres a img upload
+      const latitude =
+        req.body.latitude === "" || req.body.latitude == null
+          ? null
+          : Number(req.body.latitude);
+      const longitude =
+        req.body.longitude === "" || req.body.longitude == null
+          ? null
+          : Number(req.body.longitude);
+
       const newFind = await createFind({
-        ...req.body, // species, date_found, description, latitude, longitude, location
         user_id: req.user.id,
+        species: req.body.species,
+        date_found: req.body.date_found,
+        description: req.body.description ?? null,
+        location: req.body.location ?? null,
+        latitude,
+        longitude,
         image_url,
+        hide_location: ["true", "1", "on", "yes"].includes(
+          String(req.body.hide_location).toLowerCase()
+        ),
       });
       res.status(201).send(newFind);
     } catch (err) {
@@ -150,6 +140,12 @@ router.put(
         if (fields.longitude === "") delete fields.longitude;
         else fields.longitude = Number(fields.longitude);
       }
+      //hidden location finds
+      if (fields.hide_location !== undefined) {
+        fields.hide_location = ["true", "1", "on", "yes"].includes(
+          String(fields.hide_location).toLowerCase()
+        );
+      }
 
       //replaces image_url for edit/ changing photo:
       if (req.file) fields.image_url = `/uploads/${req.file.filename}`;
@@ -167,6 +163,14 @@ router.put(
     }
   }
 );
+
+//HIDE find
+function toBool(v) {
+  if (typeof v === "boolean") return v;
+  if (typeof v === "string")
+    return ["true", "1", "on", "yes"].includes(v.toLowerCase());
+  return false;
+}
 
 // DELETE /finds/:id (auth, owner only)
 router.delete("/:id", requireUser, async (req, res, next) => {
