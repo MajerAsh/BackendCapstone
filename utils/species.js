@@ -49,6 +49,11 @@ const SYNONYMS = new Map([
   ["bearded tooth", "hericium erinaceus"],
   ["pom pom mushroom", "hericium erinaceus"],
 
+  // Old Man of the Woods (Strobilomyces strobilaceus)
+  ["old man of the woods", "strobilomyces strobilaceus"],
+  ["strobilomyces", "strobilomyces strobilaceus"],
+  ["strobilomyces strobilaceus", "strobilomyces strobilaceus"],
+
   // Turkey Tail (Trametes versicolor)
   ["turkey tail", "trametes versicolor"],
   ["cloud mushroom", "trametes versicolor"],
@@ -202,6 +207,15 @@ export const SPECIES_META = {
     notes:
       "Enoki (cultivated form). Small brown LBMs can be dangerous; see Galerina.",
     deadly_lookalikes: ["galerina marginata"],
+  },
+  "strobilomyces strobilaceus": {
+    edible: true, // generally considered edible/not choice
+    deadly: false,
+    toxins: [],
+    syndrome: null,
+    notes:
+      "Old Man of the Woods; dark, shaggy-scaled bolete with white flesh that slowly turns pinkish/gray when cut. Edible but not highly regarded.",
+    deadly_lookalikes: [], // no documented deadly look-alikes
   },
   "hericium erinaceus": {
     edible: true,
