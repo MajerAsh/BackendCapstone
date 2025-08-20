@@ -54,11 +54,24 @@ export async function getUserById(id) {
 }
 
 //query for find foragers cmponent: search by username using ILIKE and a contains pattern
-// WITH AUTO GUESS FEATURE 🤖🤖🤖🤖🤖🤖🤖
+//🤖
 export async function searchUsersByUsername(term) {
   const sql = `
-    SELECT id, username, city, state
-    FROM users
+      SELECT
+      u.id, u.username, u.city, u.state,
+      COALESCE(ds.distinct_species, 0) AS distinct_species,
+      CASE
+        WHEN COALESCE(ds.distinct_species,0) >= 25 THEN 'Myco Master'
+        WHEN COALESCE(ds.distinct_species,0) >= 10 THEN 'Seasoned Forager'
+        WHEN COALESCE(ds.distinct_species,0) >= 5  THEN 'Fruiting'
+       ELSE NULL
+      END AS badge
+     FROM users u
+    LEFT JOIN (
+      SELECT user_id, COUNT(DISTINCT LOWER(TRIM(species))) AS distinct_species
+      FROM finds
+      GROUP BY user_id
+    ) ds ON ds.user_id = u.id
     WHERE username ILIKE '%' || $1 || '%' 
     ORDER BY username ASC
   `;
