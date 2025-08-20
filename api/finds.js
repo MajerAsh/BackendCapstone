@@ -130,6 +130,16 @@ router.put(
     try {
       const fields = { ...req.body };
 
+      // If location is present but blank, persist as NULL so the old label is cleared
+      if (fields.location !== undefined) {
+        if (
+          typeof fields.location === "string" &&
+          fields.location.trim() === ""
+        ) {
+          fields.location = null;
+        }
+      }
+
       // Convert lat/long strings to numbers if provided; drop empty strings:
       if (fields.latitude !== undefined) {
         if (fields.latitude === "") delete fields.latitude;
