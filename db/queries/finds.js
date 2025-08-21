@@ -8,9 +8,21 @@ export async function getAllFinds() {
       f.latitude, f.longitude, f.location,
       to_char(f.date_found, 'YYYY-MM-DD') AS date_found,
       f.hide_location,
-      u.username
+      u.username,
+      COALESCE(ds.distinct_species, 0) AS distinct_species,
+      CASE
+        WHEN COALESCE(ds.distinct_species,0) >= 25 THEN 'Myco Master'
+        WHEN COALESCE(ds.distinct_species,0) >= 10 THEN 'Seasoned Forager'
+        WHEN COALESCE(ds.distinct_species,0) >= 5  THEN 'Fruiting'
+        ELSE NULL
+      END AS badge
     FROM finds f
     JOIN users u ON u.id = f.user_id
+    LEFT JOIN (
+      SELECT user_id, COUNT(DISTINCT LOWER(TRIM(species))) AS distinct_species
+      FROM finds
+      GROUP BY user_id
+    ) ds ON ds.user_id = f.user_id
     WHERE f.hide_location = false
     ORDER BY f.date_found DESC
   `;
@@ -26,9 +38,21 @@ export async function getFindsByUserId(user_id) {
       f.latitude, f.longitude, f.location,
       to_char(f.date_found, 'YYYY-MM-DD') AS date_found,
       f.hide_location,
-      u.username
+      u.username,
+      COALESCE(ds.distinct_species, 0) AS distinct_species,
+      CASE
+        WHEN COALESCE(ds.distinct_species,0) >= 25 THEN 'Myco Master'
+        WHEN COALESCE(ds.distinct_species,0) >= 10 THEN 'Seasoned Forager'
+        WHEN COALESCE(ds.distinct_species,0) >= 5  THEN 'Fruiting'
+        ELSE NULL
+      END AS badge
     FROM finds f
     JOIN users u ON u.id = f.user_id
+    LEFT JOIN (
+      SELECT user_id, COUNT(DISTINCT LOWER(TRIM(species))) AS distinct_species
+      FROM finds
+      GROUP BY user_id
+    ) ds ON ds.user_id = f.user_id
     WHERE f.user_id = $1
     ORDER BY f.date_found DESC
   `;
@@ -132,9 +156,21 @@ export async function getFindsByUsername(username) {
       CASE WHEN f.hide_location THEN NULL ELSE f.location  END AS location,
       to_char(f.date_found, 'YYYY-MM-DD') AS date_found,
       f.hide_location,
-      u.username
+      u.username,
+      COALESCE(ds.distinct_species, 0) AS distinct_species,
+      CASE
+        WHEN COALESCE(ds.distinct_species,0) >= 25 THEN 'Myco Master'
+        WHEN COALESCE(ds.distinct_species,0) >= 10 THEN 'Seasoned Forager'
+        WHEN COALESCE(ds.distinct_species,0) >= 5  THEN 'Fruiting'
+        ELSE NULL
+      END AS badge
     FROM finds f
     JOIN users u ON u.id = f.user_id
+    LEFT JOIN (
+      SELECT user_id, COUNT(DISTINCT LOWER(TRIM(species))) AS distinct_species
+      FROM finds
+      GROUP BY user_id
+    ) ds ON ds.user_id = f.user_id
     WHERE u.username = $1
     ORDER BY f.date_found DESC
   `;
