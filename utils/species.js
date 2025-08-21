@@ -152,6 +152,23 @@ const SYNONYMS = new Map([
   // Enoki look-alike -> Deadly Galerina
   ["galerina", "galerina marginata"],
   ["funeral bells", "galerina marginata"],
+
+  //just look cool
+  ["bleeding tooth fungus", "hydnellum peckii"],
+  ["strawberries and cream mushroom", "hydnellum peckii"],
+  ["hydnellum peckii", "hydnellum peckii"],
+
+  ["ghost mushroom", "mycena chlorophos"],
+  ["bioluminescent mycena", "mycena chlorophos"],
+  ["mycena chlorophos", "mycena chlorophos"],
+
+  ["devil's cigar", "chorioactis geaster"],
+  ["texas star", "chorioactis geaster"],
+  ["chorioactis geaster", "chorioactis geaster"],
+
+  ["veiled lady", "phallus indusiatus"],
+  ["bamboo fungus", "phallus indusiatus"],
+  ["phallus indusiatus", "phallus indusiatus"],
 ]);
 
 ///////////////////////////////////////////////////////FACT SHEET
@@ -462,6 +479,46 @@ export const SPECIES_META = {
     toxins: ["illudin S"],
     syndrome: "Severe GI; coma cases reported",
     notes: "Mediterranean jack‑o’-lantern.",
+    deadly_lookalikes: [],
+  },
+
+  "hydnellum peckii": {
+    edible: false,
+    deadly: false,
+    toxins: [],
+    syndrome: null,
+    notes:
+      "Bleeding Tooth Fungus; white cap exuding red droplets. Inedible due to bitterness but visually striking.",
+    deadly_lookalikes: [],
+  },
+
+  "mycena chlorophos": {
+    edible: false,
+    deadly: false,
+    toxins: [],
+    syndrome: null,
+    notes:
+      "Ghost Mushroom; bioluminescent Mycena that glows bright green at night. Found in Asia, Australia, Brazil.",
+    deadly_lookalikes: [],
+  },
+
+  "chorioactis geaster": {
+    edible: false,
+    deadly: false,
+    toxins: [],
+    syndrome: null,
+    notes:
+      "Devil’s Cigar; extremely rare fungus found only in Texas and Japan. Splits open into a star shape.",
+    deadly_lookalikes: [],
+  },
+
+  "phallus indusiatus": {
+    edible: true,
+    deadly: false,
+    toxins: [],
+    syndrome: null,
+    notes:
+      "Veiled Lady; a stinkhorn with a delicate white lace-like skirt (indusium). Edible in some cultures when young, but prized more for its appearance.",
     deadly_lookalikes: [],
   },
 };
