@@ -104,10 +104,20 @@ const SYNONYMS = new Map([
   ["lobster mushroom", "hypomyces lactifluorum"],
   ["hypomyces lactifluorum", "hypomyces lactifluorum"],
 
+  ["parasol", "macrolepiota procera"],
+  ["parasol mushroom", "macrolepiota procera"],
+  ["mushroom parasol", "macrolepiota procera"],
+  ["macrolepiota procera", "macrolepiota procera"],
+
   // the deadly/fatal
   ["death cap", "amanita phalloides"],
   ["deathcap", "amanita phalloides"],
   ["amanita phalloides", "amanita phalloides"],
+
+  ["false parasol", "chlorophyllum molybdites"],
+  ["green-spored parasol", "chlorophyllum molybdites"],
+  ["vomiter mushroom", "chlorophyllum molybdites"],
+  ["chlorophyllum molybdites", "chlorophyllum molybdites"],
 
   ["destroying angel", "amanita virosa"],
   ["destroying angels", "amanita virosa"],
@@ -333,6 +343,15 @@ export const SPECIES_META = {
     notes: "Birch bolete; always cook thoroughly.",
     deadly_lookalikes: [],
   },
+  "macrolepiota procera": {
+    edible: true,
+    deadly: false,
+    toxins: [],
+    syndrome: null,
+    notes:
+      "Parasol mushroom; tall, scaly cap with a moveable ring on the stalk. A choice edible in Europe. Commonly confused with the deadly false parasol.",
+    deadly_lookalikes: ["chlorophyllum molybdites"],
+  },
   "hypomyces lactifluorum": {
     edible: true,
     deadly: false,
@@ -350,6 +369,26 @@ export const SPECIES_META = {
     toxins: ["amatoxins (α‑amanitin, etc.)"],
     syndrome: "Delayed hepatotoxicity → acute liver failure",
     notes: "Death cap; leading cause of fatal mushroom poisonings.",
+    deadly_lookalikes: [],
+  },
+  "macrolepiota procera": {
+    edible: true,
+    deadly: false,
+    toxins: [],
+    syndrome: null,
+    notes:
+      "Parasol mushroom; tall, scaly cap with a moveable ring on the stalk. A choice edible in Europe. Commonly confused with the deadly false parasol.",
+    deadly_lookalikes: ["chlorophyllum molybdites"],
+  },
+
+  "chlorophyllum molybdites": {
+    edible: false,
+    deadly: true,
+    toxins: ["unknown gastrointestinal irritants"],
+    syndrome:
+      "Severe gastrointestinal poisoning; can be life-threatening, especially for children and elderly",
+    notes:
+      "False Parasol / Green-spored Parasol; the most common cause of mushroom poisonings in North America. Gills turn green at maturity.",
     deadly_lookalikes: [],
   },
   "amanita virosa": {
