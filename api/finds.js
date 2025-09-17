@@ -1,4 +1,5 @@
 import express from "express";
+import { body, validationResult } from "express-validator";
 import multer from "multer";
 import path from "node:path";
 import fs from "node:fs";
@@ -88,10 +89,41 @@ router.post(
   "/",
   requireUser,
   upload.single("photo"),
+  [
+    body("species")
+      .isLength({ min: 2, max: 64 })
+      .withMessage("Species is required (2-64 chars)."),
+    body("date_found")
+      .isISO8601()
+      .withMessage("date_found must be a valid date (YYYY-MM-DD)."),
+    body("latitude")
+      .optional({ checkFalsy: true })
+      .isFloat({ min: -90, max: 90 })
+      .withMessage("Latitude must be a number between -90 and 90."),
+    body("longitude")
+      .optional({ checkFalsy: true })
+      .isFloat({ min: -180, max: 180 })
+      .withMessage("Longitude must be a number between -180 and 180."),
+    body("description")
+      .optional({ checkFalsy: true })
+      .isLength({ max: 500 })
+      .withMessage("Description too long (max 500 chars)."),
+    body("location")
+      .optional({ checkFalsy: true })
+      .isLength({ max: 128 })
+      .withMessage("Location label too long (max 128 chars)."),
+  ],
+  (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+    next();
+  },
   requireBody(["species", "date_found"]),
   async (req, res, next) => {
     try {
-      const image_url = req.file ? `/uploads/${req.file.filename}` : null; // if theres a img upload
+      const image_url = req.file ? `/uploads/${req.file.filename}` : null;
       const latitude =
         req.body.latitude === "" || req.body.latitude == null
           ? null
@@ -126,6 +158,39 @@ router.put(
   "/:id",
   requireUser,
   upload.single("photo"),
+  [
+    body("species")
+      .optional({ checkFalsy: true })
+      .isLength({ min: 2, max: 64 })
+      .withMessage("Species must be 2-64 chars."),
+    body("date_found")
+      .optional({ checkFalsy: true })
+      .isISO8601()
+      .withMessage("date_found must be a valid date (YYYY-MM-DD)."),
+    body("latitude")
+      .optional({ checkFalsy: true })
+      .isFloat({ min: -90, max: 90 })
+      .withMessage("Latitude must be a number between -90 and 90."),
+    body("longitude")
+      .optional({ checkFalsy: true })
+      .isFloat({ min: -180, max: 180 })
+      .withMessage("Longitude must be a number between -180 and 180."),
+    body("description")
+      .optional({ checkFalsy: true })
+      .isLength({ max: 500 })
+      .withMessage("Description too long (max 500 chars)."),
+    body("location")
+      .optional({ checkFalsy: true })
+      .isLength({ max: 128 })
+      .withMessage("Location label too long (max 128 chars)."),
+  ],
+  (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+    next();
+  },
   async (req, res, next) => {
     try {
       const fields = { ...req.body };

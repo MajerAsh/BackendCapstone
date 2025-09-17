@@ -1,4 +1,5 @@
 import express from "express";
+import { body, validationResult } from "express-validator";
 const router = express.Router();
 
 import {
@@ -13,22 +14,38 @@ import { createToken } from "#utils/jwt";
 //////////////AUTH ROUTES:
 
 //POST: creates user and returns a JWT token on success
-router
-  .route("/register")
-  .post(requireBody(["username", "password"]), async (req, res, next) => {
+router.route("/register").post(
+  [
+    body("username")
+      .isLength({ min: 3, max: 32 })
+      .withMessage("Username must be 3-32 characters."),
+    body("password")
+      .isLength({ min: 6, max: 100 })
+      .withMessage("Password must be at least 6 characters."),
+  ],
+  (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+    next();
+  },
+  requireBody(["username", "password"]),
+  async (req, res, next) => {
     try {
       const { username, password } = req.body;
       //assumes db hashes password
       const user = await createUser(username, password);
       //attch a JWT to user's id
-      const token = await createToken({ id: user.id }); //await needed???
+      const token = await createToken({ id: user.id });
       //return token to store user token
-      res.status(201).send(token);
+      res.status(201).json({ token });
     } catch (e) {
       // unique violation handled by handlePostgresErrors.js (409)
       next(e);
     }
-  });
+  }
+);
 
 // POST /users/login
 //confirms authorization and returns a JWT token
@@ -42,7 +59,7 @@ router.route("/login").post(
       if (!user) return res.status(401).send("Invalid username or password.");
       // gives a signed token for the session:
       const token = await createToken({ id: user.id });
-      res.send(token);
+      res.json({ token });
     } catch (e) {
       next(e);
     }
