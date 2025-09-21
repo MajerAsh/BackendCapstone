@@ -1,11 +1,11 @@
 import pg from "pg";
 
-const options = { connectionString: process.env.DATABASE_URL };
+const options = {
+  connectionString: process.env.DATABASE_URL,
+  ssl: { rejectUnauthorized: false }, // Always set SSL for Supabase
+};
 
-// Need SSL for external database connection
-if (process.env.NODE_ENV === "production") {
-  options.ssl = { rejectUnauthorized: false };
-}
+console.log("PG connection options:", options);
 
 const db = new pg.Client(options);
 export default db;

@@ -26,7 +26,10 @@ router.route("/register").post(
   (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
+      return res.status(400).json({
+        error:
+          "Username must be 3-32 characters. Password must be at least 6 characters.",
+      });
     }
     next();
   },
@@ -56,10 +59,11 @@ router.route("/login").post(
       const { username, password } = req.body;
       //validate credentials; returns user or null
       const user = await getUserByUsernameAndPassword(username, password);
-      if (!user) return res.status(401).send("Invalid username or password.");
+      if (!user)
+        return res.status(401).json({ error: "Invalid username or password." }); //send to json
       // gives a signed token for the session:
       const token = await createToken({ id: user.id });
-      res.json({ token });
+      res.send(token);
     } catch (e) {
       next(e);
     }

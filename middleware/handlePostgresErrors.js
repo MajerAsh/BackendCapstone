@@ -16,23 +16,27 @@ export default function handlePostgresErrors(err, req, res, next) {
   switch (err?.code) {
     case CODES.INVALID_TYPE:
       //like passing a letter when number is expected
-      return res.status(400).send("Invalid value for one or more fields.");
+      return res
+        .status(400)
+        .json({ error: "Invalid value for one or more fields." });
 
     case CODES.STRING_TRUNC:
-      return res.status(400).send("One or more fields are too long.");
+      return res
+        .status(400)
+        .json({ error: "One or more fields are too long." });
 
     case CODES.NOT_NULL:
       // err.column is usually present
       return res
         .status(400)
-        .send(`Missing required field: ${err.column || "unknown"}.`);
+        .json({ error: `Missing required field: ${err.column || "unknown"}.` });
 
     case CODES.FOREIGN_KEY:
-      return res.status(400).send("Related record not found.");
+      return res.status(400).json({ error: "Related record not found." });
 
     case CODES.UNIQUE:
       // err.detail is abbrasive
-      return res.status(409).send("That value must be unique.");
+      return res.status(409).json({ error: "User already exists" });
 
     default:
       return next(err);
