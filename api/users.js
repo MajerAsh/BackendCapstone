@@ -63,7 +63,7 @@ router.route("/login").post(
         return res.status(401).json({ error: "Invalid username or password." }); //send to json
       // gives a signed token for the session:
       const token = await createToken({ id: user.id });
-      res.send(token);
+      res.json({ token }); //send to json
     } catch (e) {
       next(e);
     }
