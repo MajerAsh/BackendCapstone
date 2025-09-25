@@ -1,35 +1,48 @@
 import express from "express";
-const app = express();
-export default app;
-
-//routers for specific resources
-import usersRouter from "#api/users";
-import findsRouter from "#api/finds";
-
-//middleware
-import getUserFromToken from "#middleware/getUserFromToken"; //attach user info to req if valid JWT provided
-import handlePostgresErrors from "#middleware/handlePostgresErrors";
 import cors from "cors";
 import morgan from "morgan"; //logs incoming requests in readable format
 import path from "node:path"; //node module for paths
 
+import usersRouter from "#api/users";
+import findsRouter from "#api/finds";
+import getUserFromToken from "#middleware/getUserFromToken";
+import handlePostgresErrors from "#middleware/handlePostgresErrors";
+
 //species helpers for facts route
 import { normalizeName, resolveName, localSafety } from "#utils/species"; //fact warning
 
-//photos
-app.use("/images", express.static(path.resolve("public_images"))); // dummy data
-app.use("/uploads", express.static(path.resolve("uploads"))); //for uploaded files at /uploads/
+//new instance of express app
+const app = express();
+export default app;
 
-app.use(getUserFromToken);
-app.use(cors({ origin: process.env.CORS_ORIGIN ?? /localhost/ })); //CORS setup:allow requests
+/*-----CORS-------*/
+const allowedOrigin = process.env.CORS_ORIGIN || /localhost/;
+app.use(
+  cors({
+    origin: allowedOrigin,
+    credentials: true, // allow cookies/headers if needed
+  })
+);
+
+//app.use(getUserFromToken);
+//app.use(cors({ origin: process.env.CORS_ORIGIN ?? /localhost/ })); //CORS setup:allow requests
+
+/*-----------Standard middleware-------*/
 app.use(morgan("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true })); //parse URL-encoded stuff (form submissions)
 
-//test
+/*---------------------- static files/ photos ----------------------*/
+app.use("/images", express.static(path.resolve("public_images"))); // dummy data
+app.use("/uploads", express.static(path.resolve("uploads"))); // for uploads
+
+//auth helper (after CORS!)
+app.use(getUserFromToken);
+
+//test endpoint
 app.get("/", (req, res) => res.send("Test endpoint!"));
 
-/////////////////////facts endpoint::::::::::::
+/*---------------------- "Facts" endpoints ----------------------*/
 app.get("/mushrooms/facts", async (req, res, next) => {
   try {
     const q = normalizeName(req.query.q);
@@ -59,6 +72,8 @@ app.get("/mushrooms/facts", async (req, res, next) => {
 //resource routes:
 app.use("/users", usersRouter);
 app.use("/finds", findsRouter);
+
+/*---------------------- Error Handlers ----------------------*/
 
 //custom Postgres error handler:
 app.use(handlePostgresErrors);
