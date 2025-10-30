@@ -15,7 +15,7 @@ import { upload } from "#utils/s3Client.js";
 
 const router = express.Router();
 
-//ROUTES:
+/////////////////////////////////////ROUTES:
 
 // GET /finds (public)
 router.get("/", async (req, res, next) => {
