@@ -11,7 +11,7 @@ import {
   deleteFind,
   getFindByIdForUser,
 } from "#db/queries/finds";
-import { upload } from "#utils/s3Client.js";
+import { upload } from "#utils/s3Client";
 
 const router = express.Router();
 
