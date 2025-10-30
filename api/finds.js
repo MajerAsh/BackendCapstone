@@ -1,5 +1,7 @@
 import express from "express";
 import { body, validationResult } from "express-validator";
+import multer from "multer";
+import multerS3 from "multer-s3";
 import requireUser from "#middleware/requireUser"; //makes sure req.user exists (auth)
 import requireBody from "#middleware/requireBody";
 import {
