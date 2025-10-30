@@ -1,6 +1,5 @@
 import express from "express";
 import { body, validationResult } from "express-validator";
-
 import requireUser from "#middleware/requireUser"; //makes sure req.user exists (auth)
 import requireBody from "#middleware/requireBody";
 import {
@@ -16,7 +15,7 @@ import { upload } from "#utils/s3Client.js";
 
 const router = express.Router();
 
-/////////////////////////////////////////////ROUTES:
+//ROUTES:
 
 // GET /finds (public)
 router.get("/", async (req, res, next) => {
