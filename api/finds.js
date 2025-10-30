@@ -18,7 +18,7 @@ import {
 
 const router = express.Router();
 
-////////////////////////////////////////MULTER set up:
+////MULTER set up:
 
 // uploads exists
 const uploadsDir = path.resolve("uploads");
