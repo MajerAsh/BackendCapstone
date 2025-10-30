@@ -1,9 +1,5 @@
 import express from "express";
 import { body, validationResult } from "express-validator";
-import multer from "multer";
-import path from "node:path";
-import fs from "node:fs";
-
 import requireUser from "#middleware/requireUser"; //makes sure req.user exists (auth)
 import requireBody from "#middleware/requireBody";
 import {
@@ -15,40 +11,11 @@ import {
   deleteFind,
   getFindByIdForUser,
 } from "#db/queries/finds";
+import { upload } from "#utils/s3Client";
 
 const router = express.Router();
 
-////////////////////////////////////////MULTER set up:
-
-// uploads exists
-const uploadsDir = path.resolve("uploads");
-if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir, { recursive: true });
-
-//Multer storage
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, uploadsDir),
-  filename: (req, file, cb) => {
-    const ext = path.extname(file.originalname) || "";
-    const base =
-      path.basename(file.originalname, ext).replace(/\s+/g, "_").slice(0, 64) ||
-      "file";
-    cb(null, `${Date.now()}-${base}${ext}`);
-  },
-});
-//filename/ time stamp
-const fileFilter = (req, file, cb) => {
-  //regex! to cut white space and shorten excessive text
-  if (/^image\//.test(file.mimetype)) cb(null, true);
-  else cb(new Error("Only image uploads are allowed"));
-};
-// 5MB max file size; use the disk storage + filter the above stuff
-const upload = multer({
-  storage,
-  fileFilter,
-  limits: { fileSize: 5 * 1024 * 1024 },
-});
-
-/////////////////////////////////////////////ROUTES:
+/////////////////////////////////////ROUTES:
 
 // GET /finds (public)
 router.get("/", async (req, res, next) => {
@@ -88,7 +55,7 @@ router.get("/:id", requireUser, async (req, res, next) => {
 router.post(
   "/",
   requireUser,
-  upload.single("photo"),
+  upload.single("photo"), // uploads to S3
   [
     body("species")
       .isLength({ min: 2, max: 64 })
@@ -123,7 +90,7 @@ router.post(
   requireBody(["species", "date_found"]),
   async (req, res, next) => {
     try {
-      const image_url = req.file ? `/uploads/${req.file.filename}` : null;
+      const image_url = req.file ? req.file.location : null; // ✅ use S3 URL
       const latitude =
         req.body.latitude === "" || req.body.latitude == null
           ? null
@@ -223,7 +190,7 @@ router.put(
       }
 
       //replaces image_url for edit/ changing photo:
-      if (req.file) fields.image_url = `/uploads/${req.file.filename}`;
+      if (req.file) fields.image_url = req.file.location;
 
       //Prunes undefined values to avoid no-op updates:
       Object.keys(fields).forEach((k) => {
