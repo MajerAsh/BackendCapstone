@@ -3,6 +3,7 @@ import app from "#app";
 import db from "#db/client";
 
 console.log("DATABASE_URL:", process.env.DATABASE_URL);
+console.log("S3_PUBLIC_BASE:", process.env.S3_PUBLIC_BASE);
 
 const PORT = process.env.PORT ?? 3000;
 
