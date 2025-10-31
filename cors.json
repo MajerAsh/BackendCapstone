@@ -2,12 +2,14 @@
   "CORSRules": [
     {
       "AllowedHeaders": ["*"],
-      "AllowedMethods": ["GET", "HEAD", "OPTIONS"],
+      "AllowedMethods": ["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE"],
       "AllowedOrigins": [
         "http://localhost:5173",
-        "https://your-production-domain.example"
+        "https://mycomap.netlify.app",
+        "https://mycomap.onrender.com"
       ],
-      "ExposeHeaders": []
+      "ExposeHeaders": ["ETag"],
+      "MaxAgeSeconds": 3000
     }
   ]
 }
