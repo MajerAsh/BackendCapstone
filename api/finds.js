@@ -94,7 +94,9 @@ router.post(
     try {
       //const image_url = req.file ? req.file.location : null; // ✅ use S3 URL
       const image_url = req.file
-        ? `${process.env.S3_PUBLIC_BASE}/${req.file.key}`
+        ? req.file.key
+          ? `${process.env.S3_PUBLIC_BASE}/${req.file.key}`
+          : req.file.location || null
         : null;
       const latitude =
         req.body.latitude === "" || req.body.latitude == null
