@@ -92,7 +92,10 @@ router.post(
   requireBody(["species", "date_found"]),
   async (req, res, next) => {
     try {
-      const image_url = req.file ? req.file.location : null; // ✅ use S3 URL
+      //const image_url = req.file ? req.file.location : null; // ✅ use S3 URL
+      const image_url = req.file
+        ? `${process.env.S3_PUBLIC_BASE}/${req.file.key}`
+        : null;
       const latitude =
         req.body.latitude === "" || req.body.latitude == null
           ? null

@@ -6,7 +6,9 @@ import path from "node:path";
 
 // Helper to check required env vars for S3
 const hasS3Creds =
-  process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY && process.env.S3_BUCKET;
+  process.env.AWS_ACCESS_KEY_ID &&
+  process.env.AWS_SECRET_ACCESS_KEY &&
+  process.env.S3_BUCKET;
 
 let s3 = null;
 let upload = null;
