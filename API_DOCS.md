@@ -103,3 +103,5 @@ This document describes the main API endpoints for the BackendCapstone project. 
 ---
 
 For more details, see the source code or contact the project maintainer.
+
+FE to BE API calls hosted by render "https://mycomap-backend.onrender.com"

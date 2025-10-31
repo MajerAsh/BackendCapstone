@@ -45,11 +45,13 @@ if (!hasS3Creds) {
   });
 
   // Configure multer to upload directly to S3 using multer-s3
+  // don't set an ACL! ...when Object Ownership is set to 'Bucket owner enforced'
+  // because ACLs are not supported in that mode (would cause AccessControlListNotSupported).
   upload = multer({
     storage: multerS3({
       s3, // S3Client (v3)
       bucket: process.env.S3_BUCKET,
-      acl: "public-read",
+      // do NOT set `acl` here; rely on the bucket policy for public-read access
       key: function (req, file, cb) {
         const uniqueName = `${Date.now()}-${file.originalname}`;
         cb(null, uniqueName);
