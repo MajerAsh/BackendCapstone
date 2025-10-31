@@ -1,0 +1,13 @@
+{
+  "CORSRules": [
+    {
+      "AllowedHeaders": ["*"],
+      "AllowedMethods": ["GET", "HEAD", "OPTIONS"],
+      "AllowedOrigins": [
+        "http://localhost:5173",
+        "https://your-production-domain.example"
+      ],
+      "ExposeHeaders": []
+    }
+  ]
+}
