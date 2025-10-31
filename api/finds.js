@@ -195,7 +195,10 @@ router.put(
       }
 
       //replaces image_url for edit/ changing photo:
-      if (req.file) fields.image_url = req.file.location;
+      if (req.file)
+        fields.image_url = req.file.key
+          ? `${process.env.S3_PUBLIC_BASE}/${req.file.key}`
+          : req.file.location || null;
 
       //Prunes undefined values to avoid no-op updates:
       Object.keys(fields).forEach((k) => {
