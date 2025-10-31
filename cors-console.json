@@ -1,0 +1,13 @@
+[
+  {
+    "AllowedHeaders": ["*"],
+    "AllowedMethods": ["GET", "HEAD", "POST", "PUT", "DELETE"],
+    "AllowedOrigins": [
+      "http://localhost:5173",
+      "https://mycomap.netlify.app",
+      "https://mycomap.onrender.com"
+    ],
+    "ExposeHeaders": ["ETag"],
+    "MaxAgeSeconds": 3000
+  }
+]
