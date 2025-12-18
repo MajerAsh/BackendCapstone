@@ -214,14 +214,6 @@ router.put(
   }
 );
 
-//HIDE find
-function toBool(v) {
-  if (typeof v === "boolean") return v;
-  if (typeof v === "string")
-    return ["true", "1", "on", "yes"].includes(v.toLowerCase());
-  return false;
-}
-
 // DELETE /finds/:id (auth, owner only)
 router.delete("/:id", requireUser, async (req, res, next) => {
   try {
