@@ -122,8 +122,26 @@ export async function createFind({
 }
 //update a find entry (owner/id only)
 export async function updateFind(id, user_id, fields) {
-  const keys = Object.keys(fields);
+  const allowed = new Set([
+    "species",
+    "description",
+    "image_url",
+    "latitude",
+    "longitude",
+    "location",
+    "date_found",
+    "hide_location",
+  ]);
+
+  const keys = Object.keys(fields).filter((k) => allowed.has(k));
   if (keys.length === 0) return null;
+
+  // If the caller attempted to update any disallowed fields, treat as an error.
+  // This avoids silently ignoring unexpected input.
+  const rejected = Object.keys(fields).filter((k) => !allowed.has(k));
+  if (rejected.length) {
+    throw new Error(`Invalid update fields: ${rejected.join(", ")}`);
+  }
 
   const setSql = keys.map((key, i) => `${key} = $${i + 1}`).join(", ");
   const values = [...Object.values(fields), id, user_id];
