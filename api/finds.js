@@ -1,12 +1,9 @@
 import express from "express";
 import { body, validationResult } from "express-validator";
-import multer from "multer";
-import multerS3 from "multer-s3";
 import requireUser from "#middleware/requireUser"; //makes sure req.user exists (auth)
 import requireBody from "#middleware/requireBody";
 import {
   getAllFinds,
-  getFindsByUserId,
   getMyFinds,
   createFind,
   updateFind,
@@ -22,10 +19,8 @@ const router = express.Router();
 // GET /finds (public)
 router.get("/", async (req, res, next) => {
   try {
-    const { user_id } = req.query;
-    const finds = user_id
-      ? await getFindsByUserId(user_id)
-      : await getAllFinds();
+    // Public map only (no user_id filtering here)
+    const finds = await getAllFinds(); // excludes hide_location=true in the DB layer
     res.send(finds);
   } catch (err) {
     next(err); // pass error to mw
@@ -167,7 +162,21 @@ router.put(
   },
   async (req, res, next) => {
     try {
-      const fields = { ...req.body };
+      // Whitelist allowed fields to prevent clients from updating arbitrary columns
+      // (and to avoid SQL injection via untrusted field names).
+      const fields = {};
+      const allowed = [
+        "species",
+        "date_found",
+        "description",
+        "location",
+        "latitude",
+        "longitude",
+        "hide_location",
+      ];
+      for (const key of allowed) {
+        if (req.body[key] !== undefined) fields[key] = req.body[key];
+      }
 
       // If location is present but blank, persist as NULL so the old label is cleared
       if (fields.location !== undefined) {
@@ -215,14 +224,6 @@ router.put(
     }
   }
 );
-
-//HIDE find
-function toBool(v) {
-  if (typeof v === "boolean") return v;
-  if (typeof v === "string")
-    return ["true", "1", "on", "yes"].includes(v.toLowerCase());
-  return false;
-}
 
 // DELETE /finds/:id (auth, owner only)
 router.delete("/:id", requireUser, async (req, res, next) => {
