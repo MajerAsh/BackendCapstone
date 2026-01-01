@@ -23,7 +23,7 @@ router.get("/", async (req, res, next) => {
     const finds = await getAllFinds(); // excludes hide_location=true in the DB layer
     res.send(finds);
   } catch (err) {
-    next(err); // pass error to mw
+    next(err);
   }
 });
 
