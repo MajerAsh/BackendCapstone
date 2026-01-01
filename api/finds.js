@@ -27,7 +27,7 @@ router.get("/", async (req, res, next) => {
   }
 });
 
-// GET /finds/me (auth)
+// GET (/finds/me): Authenticated user's finds
 router.get("/me", requireUser, async (req, res, next) => {
   try {
     const finds = await getMyFinds(req.user.id);
