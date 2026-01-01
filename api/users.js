@@ -83,9 +83,7 @@ router.get("/", async (req, res, next) => {
     next(e);
   }
 });
-/*^^for that neat feature: frontend sends a GET request to /users?search=term.
-Then, BE calls searchUsersByUsername(search) (in db/queries/users.js), which runs 
-that neat ILIKE % || $ || % */
+// Username search above (case-insensitive substring match)
 
 //User's public finds:
 router.get("/:username/finds", async (req, res, next) => {
