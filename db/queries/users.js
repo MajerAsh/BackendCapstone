@@ -15,7 +15,7 @@ export async function createUser(username, password) {
   //compares normal- text password to bcrypt hash:
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  //"parameterized" query prevents SQL injection
+  // Returns full user row including password hash (internal use only)
   const {
     rows: [user],
   } = await db.query(sql, [username, hashedPassword]);
