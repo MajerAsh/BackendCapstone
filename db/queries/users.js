@@ -53,8 +53,7 @@ export async function getUserById(id) {
   return user;
 }
 
-//query for find foragers cmponent: search by username using ILIKE and a contains pattern
-//🤖
+// Case-insensitive partial match on username
 export async function searchUsersByUsername(term) {
   const sql = `
       SELECT
@@ -79,4 +78,3 @@ export async function searchUsersByUsername(term) {
   const { rows } = await db.query(sql, [term]);
   return rows;
 }
-//substring search: WHERE username ILIKE '%' || $1 || '%' 🤖
