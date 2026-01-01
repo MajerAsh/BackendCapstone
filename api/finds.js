@@ -1,6 +1,6 @@
 import express from "express";
 import { body, validationResult } from "express-validator";
-import requireUser from "#middleware/requireUser"; //makes sure req.user exists (auth)
+import requireUser from "#middleware/requireUser"; //Auth required
 import requireBody from "#middleware/requireBody";
 import {
   getAllFinds,
