@@ -1,6 +1,6 @@
 import express from "express";
 import { body, validationResult } from "express-validator";
-import requireUser from "#middleware/requireUser"; //makes sure req.user exists (auth)
+import requireUser from "#middleware/requireUser"; //Auth required
 import requireBody from "#middleware/requireBody";
 import {
   getAllFinds,
@@ -23,11 +23,11 @@ router.get("/", async (req, res, next) => {
     const finds = await getAllFinds(); // excludes hide_location=true in the DB layer
     res.send(finds);
   } catch (err) {
-    next(err); // pass error to mw
+    next(err);
   }
 });
 
-// GET /finds/me (auth)
+// GET (/finds/me): Authenticated user's finds
 router.get("/me", requireUser, async (req, res, next) => {
   try {
     const finds = await getMyFinds(req.user.id);
