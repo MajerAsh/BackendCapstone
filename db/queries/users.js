@@ -12,7 +12,7 @@ export async function createUser(username, password) {
   RETURNING *
   `;
 
-  //compares normal- text password to bcrypt hash:
+  // Verify password against stored hash
   const hashedPassword = await bcrypt.hash(password, 10);
 
   // Returns full user row including password hash (internal use only)
