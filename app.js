@@ -35,11 +35,11 @@ app.use(express.urlencoded({ extended: true })); //parse URL-encoded stuff (form
 app.use("/images", express.static(path.resolve("public_images"))); // dummy data
 app.use("/uploads", express.static(path.resolve("uploads"))); // for uploads
 
-//auth helper (after CORS!)
+//auth helper (after CORS)
 app.use(getUserFromToken);
 
 //test endpoint
-app.get("/", (req, res) => res.send("Test endpoint!"));
+app.get("/", (req, res) => res.send("MycoMap API"));
 
 /*---------------------- "Facts" endpoints ----------------------*/
 app.get("/mushrooms/facts", async (req, res, next) => {
