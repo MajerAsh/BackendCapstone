@@ -15,7 +15,7 @@ const CODES = {
 export default function handlePostgresErrors(err, req, res, next) {
   switch (err?.code) {
     case CODES.INVALID_TYPE:
-      //like passing a letter when number is expected
+      // e.g., invalid numeric input
       return res
         .status(400)
         .json({ error: "Invalid value for one or more fields." });
