@@ -11,11 +11,10 @@ import handlePostgresErrors from "#middleware/handlePostgresErrors";
 //species helpers for facts route
 import { normalizeName, resolveName, localSafety } from "#utils/species"; //fact warning
 
-//new instance of express app
 const app = express();
 export default app;
 
-/*-----CORS-------*/
+//CORS
 const allowedOrigin = process.env.CORS_ORIGIN || /localhost/;
 app.use(
   cors({
