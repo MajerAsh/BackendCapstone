@@ -11,11 +11,10 @@ import handlePostgresErrors from "#middleware/handlePostgresErrors";
 //species helpers for facts route
 import { normalizeName, resolveName, localSafety } from "#utils/species"; //fact warning
 
-//new instance of express app
 const app = express();
 export default app;
 
-/*-----CORS-------*/
+//CORS
 const allowedOrigin = process.env.CORS_ORIGIN || /localhost/;
 app.use(
   cors({
@@ -36,11 +35,8 @@ app.use(express.urlencoded({ extended: true })); //parse URL-encoded stuff (form
 app.use("/images", express.static(path.resolve("public_images"))); // dummy data
 app.use("/uploads", express.static(path.resolve("uploads"))); // for uploads
 
-//auth helper (after CORS!)
+//auth helper (after CORS)
 app.use(getUserFromToken);
-
-//test endpoint
-app.get("/", (req, res) => res.send("Test endpoint!"));
 
 /*---------------------- "Facts" endpoints ----------------------*/
 app.get("/mushrooms/facts", async (req, res, next) => {

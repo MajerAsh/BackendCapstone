@@ -1,4 +1,4 @@
-// Basic backend test file for BackendCapstone
+// API smoke + validation tests
 
 import request from "supertest";
 import { app } from "../server.js";
