@@ -38,9 +38,6 @@ app.use("/uploads", express.static(path.resolve("uploads"))); // for uploads
 //auth helper (after CORS)
 app.use(getUserFromToken);
 
-//test endpoint
-app.get("/", (req, res) => res.send("MycoMap API"));
-
 /*---------------------- "Facts" endpoints ----------------------*/
 app.get("/mushrooms/facts", async (req, res, next) => {
   try {
