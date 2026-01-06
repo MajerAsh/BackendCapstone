@@ -23,16 +23,13 @@ app.use(
   })
 );
 
-//app.use(getUserFromToken);
-//app.use(cors({ origin: process.env.CORS_ORIGIN ?? /localhost/ })); //CORS setup:allow requests
-
 /*-----------Standard middleware-------*/
 app.use(morgan("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true })); //parse URL-encoded stuff (form submissions)
 
 /*---------------------- static files/ photos ----------------------*/
-app.use("/images", express.static(path.resolve("public_images"))); // dummy data
+app.use("/images", express.static(path.resolve("public_images"))); // for data
 app.use("/uploads", express.static(path.resolve("uploads"))); // for uploads
 
 //auth helper (after CORS)
