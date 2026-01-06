@@ -9,7 +9,7 @@ export function normalizeName(input) {
 }
 /////////////////////////////////////////////////////////////////NAMES
 const SYNONYMS = new Map([
-  //dummy data edibles
+  //Data: edibles
   // Morel (Morchella spp.)
   ["morel", "morchella spp."],
   ["true morel", "morchella spp."],

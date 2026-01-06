@@ -17,7 +17,7 @@ function randomDateWithinYears(years = 2) {
   return date.toISOString().slice(0, 10); // YYYY-MM-DD
 }
 
-/////////// data pools
+// data pools
 const speciesList = [
   "Morel",
   "Chanterelle",
@@ -74,7 +74,7 @@ const worldSpots = [
   { location: "Harbin, China", latitude: 45.8038, longitude: 126.5349 },
 ];
 
-// base names +  random # suffix so re-seeding doesnt mess it up
+// base names +  random # suffix so re-seeding doesnt break
 const baseUsernames = [
   "forest_finder",
   "spore_scout",
@@ -101,12 +101,11 @@ const usernames = baseUsernames.map(
   (n) => `${n}_${Math.floor(100 + Math.random() * 900)}`
 );
 
-/////////////////////seeding
+//seeding
 async function seed() {
-  // original demo user
   const foo = await createUser("foo", "bar");
 
-  // helper to insert a find
+  // helper: insert a find
   async function addFind(userId, species, spot) {
     await createFind({
       user_id: userId,
@@ -121,7 +120,6 @@ async function seed() {
     });
   }
 
-  // ensure a user reaches N distinct species (adds more finds if needed)
   async function ensureDistinctSpecies(
     user,
     alreadySpeciesSet,
@@ -132,7 +130,6 @@ async function seed() {
 
     // available species not yet used by this user
     const pool = speciesList.filter((s) => !alreadySpeciesSet.has(s));
-    // if pool smaller than need, we’ll just take what we can (demo scale is fine)
     for (let i = 0; i < need && i < pool.length; i++) {
       const s = pool[i];
       const spot = choice(worldSpots);
@@ -141,7 +138,7 @@ async function seed() {
     }
   }
 
-  // Give foo exactly 5 distinct species for a “Fruiting” badge
+  // Foo has 5 distinct species for a “Fruiting” badge
   {
     const base1 = "Morel";
     const base2 = "Chanterelle";
@@ -164,17 +161,17 @@ async function seed() {
     }
   }
 
-  // 20 users × 2 baseline finds each, then “top up” some to hit badges
+  // 20 users × 2 baseline finds each, then add to hit badges
   for (let i = 0; i < usernames.length; i++) {
     const uname = usernames[i];
     const u = await createUser(uname, "password");
 
-    // two baseline finds (like before)
+    // 2 baseline finds
     const spot1 = choice(worldSpots);
     const spot2 = choice(worldSpots);
     const s1 = choice(speciesList);
     let s2 = choice(speciesList);
-    // try to make the second baseline species distinct
+    // second baseline species distinct
     if (s2 === s1) {
       s2 = choice(speciesList.filter((s) => s !== s1)) || s2;
     }
@@ -185,11 +182,11 @@ async function seed() {
     // distinct species set so far
     const used = new Set([s1, s2]);
 
-    // assign badge targets by simple index pattern:
-    //   every 10th user → 25 (Myco Master)
-    //   every 10th user where i%10 in {3,4} → 10 (Seasoned)
-    //   every 10th user where i%10 in {6,7} → 5 (Fruiting)
-    //   rest → keep <5 (no badge)
+    /* assign badge targets by simple index pattern:
+         every 10th user → 25 (Myco Master)
+         every 10th user where i%10 in {3,4} → 10 (Seasoned)
+         every 10th user where i%10 in {6,7} → 5 (Fruiting)
+         rest → keep <5 (no badge)*/
     let targetDistinct = 0;
     switch (i % 10) {
       case 0:
@@ -204,14 +201,13 @@ async function seed() {
         targetDistinct = 5;
         break;
       default:
-        targetDistinct = used.size; // leave as-is (likely <5)
+        targetDistinct = used.size;
     }
 
     await ensureDistinctSpecies(u, used, targetDistinct);
   }
 }
 
-/* ----------------- run ----------------- */
 await db.connect();
 try {
   await seed();
