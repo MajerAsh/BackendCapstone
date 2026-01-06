@@ -103,6 +103,19 @@ npm run db:reset
 
 Schema lives in `db/schema.sql`.
 
+## Testing
+
+This project includes a Jest test setup (see `test/` and the `npm test` script).
+
+```bash
+npm test
+```
+
+Notes:
+
+- The test runner is configured for ESM and uses Node's `--experimental-vm-modules` flag (see `package.json`).
+- If you’re running tests against a real database, ensure `DATABASE_URL` is set appropriately for your test environment.
+
 ## Image uploads
 
 - Upload field name for multipart forms: `photo`
