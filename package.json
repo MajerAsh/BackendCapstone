@@ -1,5 +1,5 @@
 {
-  "name": "backendcapstonemyco",
+  "name": "mycomap-server",
   "type": "module",
   "imports": {
     "#*": "./*.js"

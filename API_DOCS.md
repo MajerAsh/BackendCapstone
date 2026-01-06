@@ -1,8 +1,8 @@
-# BackendCapstone API Documentation
+# MycoMap Server API Documentation
 
 ## Overview
 
-This document describes the main API endpoints for the BackendCapstone project. All endpoints return JSON unless otherwise noted.
+This document describes the main API endpoints for the MycoMap server. All endpoints return JSON unless otherwise noted.
 
 ---
 
