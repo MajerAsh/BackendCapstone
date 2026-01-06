@@ -9,7 +9,7 @@ import getUserFromToken from "#middleware/getUserFromToken";
 import handlePostgresErrors from "#middleware/handlePostgresErrors";
 
 //species helpers for facts route
-import { normalizeName, resolveName, localSafety } from "#utils/species"; //fact warning
+import { normalizeName, resolveName, localSafety } from "#utils/species";
 
 const app = express();
 export default app;
@@ -19,7 +19,7 @@ const allowedOrigin = process.env.CORS_ORIGIN || /localhost/;
 app.use(
   cors({
     origin: allowedOrigin,
-    credentials: true, // allow cookies/headers if needed
+    credentials: true,
   })
 );
 
@@ -32,7 +32,6 @@ app.use(express.urlencoded({ extended: true })); //parse URL-encoded stuff (form
 app.use("/images", express.static(path.resolve("public_images"))); // for data
 app.use("/uploads", express.static(path.resolve("uploads"))); // for uploads
 
-//auth helper (after CORS)
 app.use(getUserFromToken);
 
 /*---------------------- "Facts" endpoints ----------------------*/
@@ -46,8 +45,8 @@ app.get("/mushrooms/facts", async (req, res, next) => {
 
     res.send({
       query: q,
-      name: resolvedName, // resolved scientific name
-      scientific_name: resolvedName, //^
+      name: resolvedName,
+      scientific_name: resolvedName,
       common_names: [],
       edible: meta?.edible ?? null,
       deadly: meta?.deadly ?? null,
@@ -67,8 +66,7 @@ app.use("/users", usersRouter);
 app.use("/finds", findsRouter);
 
 /*---------------------- Error Handlers ----------------------*/
-
-//custom Postgres error handler:
+//Postgres error handler
 app.use(handlePostgresErrors);
 
 //generic last resort error handler:
