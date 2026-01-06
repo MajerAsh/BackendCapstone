@@ -208,7 +208,6 @@ async function seed() {
   }
 }
 
-/* ----------------- run ----------------- */
 await db.connect();
 try {
   await seed();
