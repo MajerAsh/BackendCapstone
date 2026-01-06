@@ -74,7 +74,7 @@ const worldSpots = [
   { location: "Harbin, China", latitude: 45.8038, longitude: 126.5349 },
 ];
 
-// base names +  random # suffix so re-seeding doesnt mess it up
+// base names +  random # suffix so re-seeding doesnt break
 const baseUsernames = [
   "forest_finder",
   "spore_scout",
@@ -105,7 +105,7 @@ const usernames = baseUsernames.map(
 async function seed() {
   const foo = await createUser("foo", "bar");
 
-  // helper to insert a find
+  // helper: insert a find
   async function addFind(userId, species, spot) {
     await createFind({
       user_id: userId,
@@ -138,7 +138,7 @@ async function seed() {
     }
   }
 
-  // Give foo exactly 5 distinct species for a “Fruiting” badge
+  // Foo has 5 distinct species for a “Fruiting” badge
   {
     const base1 = "Morel";
     const base2 = "Chanterelle";
@@ -166,12 +166,12 @@ async function seed() {
     const uname = usernames[i];
     const u = await createUser(uname, "password");
 
-    // two baseline finds
+    // 2 baseline finds
     const spot1 = choice(worldSpots);
     const spot2 = choice(worldSpots);
     const s1 = choice(speciesList);
     let s2 = choice(speciesList);
-    // to make the second baseline species distinct
+    // second baseline species distinct
     if (s2 === s1) {
       s2 = choice(speciesList.filter((s) => s !== s1)) || s2;
     }
@@ -201,7 +201,7 @@ async function seed() {
         targetDistinct = 5;
         break;
       default:
-        targetDistinct = used.size; // leave as-is (likely <5)
+        targetDistinct = used.size;
     }
 
     await ensureDistinctSpecies(u, used, targetDistinct);
