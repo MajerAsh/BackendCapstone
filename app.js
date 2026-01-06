@@ -26,7 +26,7 @@ app.use(
 /*-----------Standard middleware-------*/
 app.use(morgan("dev"));
 app.use(express.json());
-app.use(express.urlencoded({ extended: true })); //parse URL-encoded stuff (form submissions)
+app.use(express.urlencoded({ extended: true }));
 
 /*---------------------- static files/ photos ----------------------*/
 app.use("/images", express.static(path.resolve("public_images"))); // for data
