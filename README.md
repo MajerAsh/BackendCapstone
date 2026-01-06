@@ -1,10 +1,8 @@
-# MycoMap Server (`mycomap-server`)
+# MycoMap Server (mycomap-server)
 
-Backend REST API for MycoMap — a mushroom foraging and logging platform. This service powers authentication, persistence, and photo uploads for the MycoMap client.
+Backend REST API for MycoMap — a mushroom foraging and logging platform. This service handles authentication, persistence, and photo uploads.
 
-This repository was previously named **BackendCapstone** and is now named **`mycomap-server`**.
-
-## Highlights
+## What This Service Does
 
 - Secure auth with **JWT + bcrypt**
 - **PostgreSQL** persistence (Supabase-compatible)
@@ -105,7 +103,7 @@ Schema lives in `db/schema.sql`.
 
 ## Testing
 
-This project includes a Jest test setup (see `test/` and the `npm test` script).
+Basic API smoke + validation tests live in `test/api.test.js`. They use Jest + Supertest and exercise the auth + finds endpoints (register/login, create find, update find, and input validation).
 
 ```bash
 npm test
@@ -114,7 +112,7 @@ npm test
 Notes:
 
 - The test runner is configured for ESM and uses Node's `--experimental-vm-modules` flag (see `package.json`).
-- If you’re running tests against a real database, ensure `DATABASE_URL` is set appropriately for your test environment.
+- Tests create real rows (users/finds). Point `DATABASE_URL` at a safe test database and make sure the schema has been applied (`npm run db:schema`).
 
 ## Image uploads
 
