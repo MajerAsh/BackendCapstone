@@ -12,17 +12,15 @@ export async function createUser(username, password) {
   RETURNING *
   `;
 
-  // Verify password against stored hash
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  // Returns full user row including password hash (internal use only)
+  // Returns full user row including password hash 
   const {
     rows: [user],
   } = await db.query(sql, [username, hashedPassword]);
   return user;
 }
 
-//get user by username: uses bcrypt.compare to compare hash to text, returns user on success
 export async function getUserByUsernameAndPassword(username, password) {
   const sql = `
   SELECT *
@@ -74,7 +72,6 @@ export async function searchUsersByUsername(term) {
     WHERE username ILIKE '%' || $1 || '%' 
     ORDER BY username ASC
   `;
-  //"parameterized"; the '%' concat happens in SQL, input stays a single param
   const { rows } = await db.query(sql, [term]);
   return rows;
 }
