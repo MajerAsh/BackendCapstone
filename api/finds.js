@@ -14,7 +14,7 @@ import { upload } from "#utils/s3Client";
 
 const router = express.Router();
 
-/////////////////////////////////////ROUTES:
+/*-----------ROUTES:------------*/
 
 // GET /finds (public)
 router.get("/", async (req, res, next) => {
@@ -162,8 +162,8 @@ router.put(
   },
   async (req, res, next) => {
     try {
-      // Whitelist allowed fields to prevent clients from updating arbitrary columns
-      // (and to avoid SQL injection via untrusted field names).
+      /* Whitelist allowed fields to prevent clients from updating arbitrary columns
+       (and to avoid SQL injection via untrusted field names).*/
       const fields = {};
       const allowed = [
         "species",
