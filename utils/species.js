@@ -7,7 +7,7 @@ export function normalizeName(input) {
     .replace(/\s+/g, " ") //regex for spaces
     .trim();
 }
-/////////////////////////////////////////////////////////////////NAMES
+/*------Name resolution map-----*/
 const SYNONYMS = new Map([
   //Data: edibles
   // Morel (Morchella spp.)

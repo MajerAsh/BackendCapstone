@@ -32,6 +32,11 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/images", express.static(path.resolve("public_images"))); // for data
 app.use("/uploads", express.static(path.resolve("uploads"))); // for uploads
 
+/*---------------------- Health Check ----------------------*/
+app.get("/", (req, res) => {
+  res.json({ message: "MycoMap API is running" });
+});
+
 app.use(getUserFromToken);
 
 /*---------------------- "Facts" endpoints ----------------------*/
