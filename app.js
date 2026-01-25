@@ -71,10 +71,8 @@ app.use("/users", usersRouter);
 app.use("/finds", findsRouter);
 
 /*---------------------- Error Handlers ----------------------*/
-//Postgres error handler
 app.use(handlePostgresErrors);
 
-//generic last resort error handler:
 app.use((err, req, res, next) => {
   console.error(err);
   res.status(500).send("Sorry! Something went wrong.");
