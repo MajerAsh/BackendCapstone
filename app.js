@@ -20,7 +20,7 @@ app.use(
   cors({
     origin: allowedOrigin,
     credentials: true,
-  })
+  }),
 );
 
 /*-----------Standard middleware-------*/
@@ -31,6 +31,11 @@ app.use(express.urlencoded({ extended: true }));
 /*---------------------- static files/ photos ----------------------*/
 app.use("/images", express.static(path.resolve("public_images"))); // for data
 app.use("/uploads", express.static(path.resolve("uploads"))); // for uploads
+
+/*---------------------- Health Check ----------------------*/
+app.get("/", (req, res) => {
+  res.json({ message: "MycoMap API is running" });
+});
 
 app.use(getUserFromToken);
 
@@ -66,10 +71,8 @@ app.use("/users", usersRouter);
 app.use("/finds", findsRouter);
 
 /*---------------------- Error Handlers ----------------------*/
-//Postgres error handler
 app.use(handlePostgresErrors);
 
-//generic last resort error handler:
 app.use((err, req, res, next) => {
   console.error(err);
   res.status(500).send("Sorry! Something went wrong.");
