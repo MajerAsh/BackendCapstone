@@ -20,7 +20,7 @@ app.use(
   cors({
     origin: allowedOrigin,
     credentials: true,
-  })
+  }),
 );
 
 /*-----------Standard middleware-------*/
