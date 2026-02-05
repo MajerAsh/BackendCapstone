@@ -14,7 +14,6 @@ export async function createUser(username, password) {
 
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  // Returns full user row including password hash 
   const {
     rows: [user],
   } = await db.query(sql, [username, hashedPassword]);
