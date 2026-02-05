@@ -52,7 +52,6 @@ export async function getUserById(id) {
   return user;
 }
 
-// Case-insensitive partial match on username
 export async function searchUsersByUsername(term) {
   const sql = `
       SELECT
