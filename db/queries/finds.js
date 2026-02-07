@@ -118,7 +118,7 @@ export async function createFind({
   const {
     rows: [find],
   } = await db.query(sql, values); //run query + destructure a find
-  return find; //sends back a inserted find
+  return find;
 }
 //update a find entry (owner/id only)
 export async function updateFind(id, user_id, fields) {
