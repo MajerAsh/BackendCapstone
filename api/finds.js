@@ -14,18 +14,6 @@ import { upload } from "#utils/s3Client";
 
 const router = express.Router();
 
-function getImageUrl(file) {
-  if (!file) return null;
-  if (file.key) {
-    return process.env.S3_PUBLIC_BASE
-      ? `${process.env.S3_PUBLIC_BASE}/${file.key}`
-      : null;
-  }
-  if (file.location) return file.location;
-  if (file.filename) return `/uploads/${file.filename}`;
-  return null;
-}
-
 /*-----------ROUTES:------------*/
 
 // GET /finds (public)
@@ -100,7 +88,11 @@ router.post(
   async (req, res, next) => {
     try {
       //const image_url = req.file ? req.file.location : null; // ✅ use S3 URL
-      const image_url = getImageUrl(req.file);
+      const image_url = req.file
+        ? req.file.key
+          ? `${process.env.S3_PUBLIC_BASE}/${req.file.key}`
+          : req.file.location || null
+        : null;
       const latitude =
         req.body.latitude === "" || req.body.latitude == null
           ? null
@@ -214,7 +206,10 @@ router.put(
       }
 
       //replaces image_url for edit/ changing photo:
-      if (req.file) fields.image_url = getImageUrl(req.file);
+      if (req.file)
+        fields.image_url = req.file.key
+          ? `${process.env.S3_PUBLIC_BASE}/${req.file.key}`
+          : req.file.location || null;
 
       //Prunes undefined values to avoid no-op updates:
       Object.keys(fields).forEach((k) => {
