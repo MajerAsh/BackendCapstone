@@ -61,4 +61,3 @@ if (!hasS3Creds) {
 }
 
 export { upload };
-export default s3;

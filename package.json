@@ -13,6 +13,7 @@
     "db:reset": "npm run db:schema && npm run db:seed"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.921.0",
     "aws-sdk": "^2.1692.0",
     "bcrypt": "^6.0.0",
     "cors": "^2.8.5",
@@ -23,8 +24,7 @@
     "morgan": "^1.10.0",
     "multer": "^2.0.2",
     "multer-s3": "^3.0.1",
-    "pg": "^8.14.1",
-    "react-router": "^7.7.1"
+    "pg": "^8.14.1"
   },
   "engines": {
     "node": ">=22.0.0"
