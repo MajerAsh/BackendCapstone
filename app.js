@@ -23,23 +23,23 @@ app.use(
   }),
 );
 
-/*-----------Standard middleware-------*/
+// Middleware
 app.use(morgan("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-/*---------------------- static files/ photos ----------------------*/
+// static files/ photos
 app.use("/images", express.static(path.resolve("public_images"))); // for data
 app.use("/uploads", express.static(path.resolve("uploads"))); // for uploads
 
-/*---------------------- Health Check ----------------------*/
+// Health Check
 app.get("/", (req, res) => {
   res.json({ message: "MycoMap API is running" });
 });
 
 app.use(getUserFromToken);
 
-/*---------------------- "Facts" endpoints ----------------------*/
+// "Facts" endpoints
 app.get("/mushrooms/facts", async (req, res, next) => {
   try {
     const q = normalizeName(req.query.q);
@@ -70,10 +70,26 @@ app.get("/mushrooms/facts", async (req, res, next) => {
 app.use("/users", usersRouter);
 app.use("/finds", findsRouter);
 
-/*---------------------- Error Handlers ----------------------*/
+// 404 Handler - must come after all routes
+app.use((req, res) => {
+  res.status(404).json({ 
+    error: "Not Found",
+    message: `Cannot ${req.method} ${req.path}`
+  });
+});
+
+// Error Handlers
 app.use(handlePostgresErrors);
 
+// Final error handler - environment-aware
 app.use((err, req, res, next) => {
   console.error(err);
-  res.status(500).send("Sorry! Something went wrong.");
+  
+  const statusCode = err.status || err.statusCode || 500;
+  const isDevelopment = process.env.NODE_ENV !== "production";
+  
+  res.status(statusCode).json({
+    error: err.message || "Something went wrong",
+    ...(isDevelopment && { stack: err.stack })
+  });
 });

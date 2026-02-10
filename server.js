@@ -11,10 +11,12 @@ await db.connect();
 
 if (process.env.NODE_ENV !== "test") {
   const server = app.listen(PORT, () => {
-    console.log(`Server is Successfully Running, and App is listening on port ${PORT}`);
+    console.log(
+      `Server is Successfully Running, and App is listening on port ${PORT}`,
+    );
   });
 
-  server.on('error', (error) => {
+  server.on("error", (error) => {
     console.error("Error occurred, server can't start", error);
     process.exit(1);
   });
