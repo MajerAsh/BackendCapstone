@@ -72,9 +72,9 @@ app.use("/finds", findsRouter);
 
 // 404 Handler - must come after all routes
 app.use((req, res) => {
-  res.status(404).json({ 
+  res.status(404).json({
     error: "Not Found",
-    message: `Cannot ${req.method} ${req.path}`
+    message: `Cannot ${req.method} ${req.path}`,
   });
 });
 
@@ -84,12 +84,12 @@ app.use(handlePostgresErrors);
 // Final error handler - environment-aware
 app.use((err, req, res, next) => {
   console.error(err);
-  
+
   const statusCode = err.status || err.statusCode || 500;
   const isDevelopment = process.env.NODE_ENV !== "production";
-  
+
   res.status(statusCode).json({
     error: err.message || "Something went wrong",
-    ...(isDevelopment && { stack: err.stack })
+    ...(isDevelopment && { stack: err.stack }),
   });
 });
