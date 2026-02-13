@@ -10,8 +10,15 @@ const PORT = process.env.PORT ?? 3000;
 await db.connect();
 
 if (process.env.NODE_ENV !== "test") {
-  app.listen(PORT, () => {
-    console.log(`Listening on port ${PORT}...`);
+  const server = app.listen(PORT, () => {
+    console.log(
+      `Server is Successfully Running, and App is listening on port ${PORT}`,
+    );
+  });
+
+  server.on("error", (error) => {
+    console.error("Error occurred, server can't start", error);
+    process.exit(1);
   });
 }
 
