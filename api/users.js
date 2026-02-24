@@ -39,15 +39,14 @@ router.route("/register").post(
       const { username, password } = req.body;
       //assumes db hashes password
       const user = await createUser(username, password);
-      //attch a JWT to user's id
       const token = await createToken({ id: user.id });
-      //return token to store user token
+
       res.status(201).json({ token });
     } catch (e) {
       // unique violation handled by handlePostgresErrors.js (409)
       next(e);
     }
-  }
+  },
 );
 
 // POST /users/login
@@ -57,7 +56,6 @@ router.route("/login").post(
   async (req, res, next) => {
     try {
       const { username, password } = req.body;
-      //validate credentials; returns user or null
       const user = await getUserByUsernameAndPassword(username, password);
       if (!user)
         return res.status(401).json({ error: "Invalid username or password." }); //send to json
@@ -67,11 +65,11 @@ router.route("/login").post(
     } catch (e) {
       next(e);
     }
-  }
+  },
 );
 
 // GET /users?search=
-//Find user (the search)🤖
+//Find user (the search)
 router.get("/", async (req, res, next) => {
   try {
     const { search } = req.query;

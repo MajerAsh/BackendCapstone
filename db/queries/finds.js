@@ -1,6 +1,6 @@
 import db from "#db/client";
 
-// Public map: exclude secret finds entirely
+// Public map: exclude secret finds entirely (26)
 export async function getAllFinds() {
   const sql = `
     SELECT

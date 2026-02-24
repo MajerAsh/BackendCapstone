@@ -70,7 +70,7 @@ app.get("/mushrooms/facts", async (req, res, next) => {
 app.use("/users", usersRouter);
 app.use("/finds", findsRouter);
 
-// 404 Handler - must come after all routes
+// 404 Handler (must come after all routes)
 app.use((req, res) => {
   res.status(404).json({
     error: "Not Found",
